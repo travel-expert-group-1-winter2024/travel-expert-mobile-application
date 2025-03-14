@@ -41,18 +41,12 @@ public class LoginActivity extends AppCompatActivity {
             // Get the username and password from the edit text fields
             String username = etUsername.getText().toString();
             String password = etPassword.getText().toString();
-            // Check if the username and password are empty
-            if (username.isEmpty() || password.isEmpty()) {
-                // Show an error message
-                Toast.makeText(LoginActivity.this, "Please enter your username and password", Toast.LENGTH_SHORT).show();
-            } else {
-                // Create an intent to start the main activity
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                // Start the main activity
-                startActivity(intent);
-                // Finish the current activity
-                finish();
-            }
+            // Create an intent to start the main activity
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            // Start the main activity
+            startActivity(intent);
+            // Finish the current activity
+            finish();
         });
     }
 }
