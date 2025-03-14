@@ -1,9 +1,11 @@
 package com.example.travelexpertmobileapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,5 +35,24 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etLoginPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvSignUp = findViewById(R.id.tvSignUp);
+
+        // Set on click listener on the sign up text view
+        btnLogin.setOnClickListener(v -> {
+            // Get the username and password from the edit text fields
+            String username = etUsername.getText().toString();
+            String password = etPassword.getText().toString();
+            // Check if the username and password are empty
+            if (username.isEmpty() || password.isEmpty()) {
+                // Show an error message
+                Toast.makeText(LoginActivity.this, "Please enter your username and password", Toast.LENGTH_SHORT).show();
+            } else {
+                // Create an intent to start the main activity
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                // Start the main activity
+                startActivity(intent);
+                // Finish the current activity
+                finish();
+            }
+        });
     }
 }
