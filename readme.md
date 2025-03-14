@@ -18,9 +18,9 @@
 This is an **Android application** developed for **Travel Experts agents** as part of **Project Workshop – CMPP264 (Android)** at SAIT. The app allows agents and managers to **view and manage travel packages, customers, suppliers, and products**, while also enabling **location search, user registration with photo capture, and activity logging**.
 
 ## 🔧 Technologies Used
-- **Java / Kotlin** (Core Development)
+- **Java** (Core Development)
 - **Android SDK** (Mobile Development)
-- **Firebase / MySQL** (Database)
+- **PostgreSQL** (Database)
 - **REST API** (Server Communication)
 - **GitHub** (Version Control)
 
