@@ -135,6 +135,13 @@
             android:id="@+id/spnAgency"
             android:layout_width="328dp"
             android:layout_height="48dp" />
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="Submit" />
     </LinearLayout>
 
 
