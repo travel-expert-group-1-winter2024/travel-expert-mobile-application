@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -20,6 +21,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -41,6 +43,9 @@ public class SignUpActivity extends AppCompatActivity {
     ImageButton btnBack;
     ImageView imgProfile;
     Bitmap bitmapImage;
+
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_PICK = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,18 +71,26 @@ public class SignUpActivity extends AppCompatActivity {
 
         // Back Button Click
         btnBack.setOnClickListener(v -> finish());
-        imgProfile.setOnClickListener(v -> openCamera());
+        imgProfile.setOnClickListener(v -> showImagePickerDialog());
     }
 
-    private void openCamera() {
-        if (checkPermission()) {
-            Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
-            captureImage();
-        } else {
-            // if granted, capture image
-            Toast.makeText(this, "Permission not granted, request permission", Toast.LENGTH_SHORT).show();
-            requestPermission();
-        }
+    private void showImagePickerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Image")
+                .setItems(new CharSequence[]{"Take Photo", "Choose from Gallery"}, (dialog, which) -> {
+                    if (which == 0) {
+                        captureImage(); // Open Camera
+                    } else {
+                        selectImageFromGallery(); // Open Gallery
+                    }
+                })
+                .show();
+    }
+
+    private void selectImageFromGallery() {
+        Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickPhoto.setType("image/*");
+        startActivityForResult(pickPhoto, REQUEST_IMAGE_PICK);
     }
 
     private Boolean checkPermission() {
@@ -93,7 +106,7 @@ public class SignUpActivity extends AppCompatActivity {
     private void captureImage() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, 1);
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         } else {
             Toast.makeText(this, "No camera app installed", Toast.LENGTH_SHORT).show();
         }
@@ -113,10 +126,8 @@ public class SignUpActivity extends AppCompatActivity {
                 // permission is granted to camera, call capture image
                 Toast.makeText(this, "Permission granted to camera", Toast.LENGTH_SHORT).show();
                 captureImage();
-            } else { // permission denied
-                // request for permission again
-                Toast.makeText(this, "Permission to camera is denied", Toast.LENGTH_SHORT).show();
-//                requestPermission();
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -126,13 +137,18 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            // extract image from intent using extras
-            Bundle extras = data.getExtras();
-            // TODO: We might don't need to create a new attribute for bitmap image
-            bitmapImage = (Bitmap) extras.get("data");
-            imgProfile.setImageBitmap(bitmapImage);
-            // store image
-            saveImageToDrive(bitmapImage);
+            if (requestCode == REQUEST_IMAGE_CAPTURE) {
+                // Image captured from camera
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                imgProfile.setImageBitmap(imageBitmap);
+                saveImageToDrive(imageBitmap);
+
+            } else if (requestCode == REQUEST_IMAGE_PICK) {
+                // Image selected from gallery
+                Uri selectedImageUri = data.getData();
+                imgProfile.setImageURI(selectedImageUri);
+            }
         }
     }
 
