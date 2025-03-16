@@ -48,5 +48,12 @@ public class LoginActivity extends AppCompatActivity {
             // Finish the current activity
             finish();
         });
+
+        tvSignUp.setOnClickListener(v -> {
+            // Create an intent to start the sign up activity
+            Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+            // Start the sign up activity
+            startActivity(intent);
+        });
     }
 }
