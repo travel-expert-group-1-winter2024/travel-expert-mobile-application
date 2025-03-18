@@ -1,10 +1,8 @@
 package com.example.travelexpertmobileapplication;
 
 import android.os.Bundle;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
-        // load the home fragment by default
+        // Load the HomeFragment by default when the app starts
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new HomeFragment())
@@ -33,6 +31,10 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new MapFragment();
             } else if (itemId == R.id.nav_profile) {
                 selectedFragment = new ProfileFragment();
+            } else if (itemId == R.id.nav_product) {  // ✅ Product Section
+                selectedFragment = new ProductFragment();
+            } else if (itemId == R.id.nav_supplier) { // ✅ Supplier Section
+                selectedFragment = new SupplierFragment();
             }
 
             if (selectedFragment != null) {

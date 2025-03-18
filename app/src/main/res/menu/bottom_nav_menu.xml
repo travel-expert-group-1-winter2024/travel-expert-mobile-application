@@ -15,4 +15,14 @@
         android:icon="@drawable/ic_profile"
         android:title="Profile"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/nav_product"
+        android:icon="@drawable/ic_product"
+        android:title="Products" />
+
+    <item
+        android:id="@+id/nav_supplier"
+        android:icon="@drawable/ic_supplier"
+        android:title="Suppliers" />
+
 </menu>

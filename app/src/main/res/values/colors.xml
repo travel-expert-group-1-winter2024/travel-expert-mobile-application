@@ -2,4 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Colors for Bottom Navigation -->
+    <color name="nav_icon_color">#757575</color> <!-- Grey color -->
+    <color name="nav_text_color">#000000</color> <!-- Black text color -->
 </resources>
