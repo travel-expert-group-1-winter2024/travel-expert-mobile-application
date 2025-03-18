@@ -31,10 +31,6 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new MapFragment();
             } else if (itemId == R.id.nav_profile) {
                 selectedFragment = new ProfileFragment();
-            } else if (itemId == R.id.nav_product) {  // ✅ Product Section
-                selectedFragment = new ProductFragment();
-            } else if (itemId == R.id.nav_supplier) { // ✅ Supplier Section
-                selectedFragment = new SupplierFragment();
             }
 
             if (selectedFragment != null) {
