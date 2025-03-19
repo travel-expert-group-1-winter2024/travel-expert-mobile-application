@@ -79,7 +79,14 @@ public class SignUpActivity extends AppCompatActivity {
         builder.setTitle("Select Image")
                 .setItems(new CharSequence[]{"Take Photo", "Choose from Gallery"}, (dialog, which) -> {
                     if (which == 0) {
-                        captureImage(); // Open Camera
+                        if (checkPermission()) {
+                            Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
+                            captureImage();
+                        } else {
+                            // if granted, capture image
+                            Toast.makeText(this, "Permission not granted, request permission", Toast.LENGTH_SHORT).show();
+                            requestPermission();
+                        }
                     } else {
                         selectImageFromGallery(); // Open Gallery
                     }
@@ -95,7 +102,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private Boolean checkPermission() {
         // camera's permission
-        int cameraPermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA);
+        int cameraPermission = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CAMERA);
         // storage's permission
         int storagePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -128,6 +135,7 @@ public class SignUpActivity extends AppCompatActivity {
                 captureImage();
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                requestPermission();
             }
         }
     }
