@@ -1,18 +1,20 @@
 package com.example.travelexpertmobileapplication.utils;
 
 import com.example.travelexpertmobileapplication.Models.Customer;
-import com.google.gson.JsonElement;
-
-import java.util.List;
+import com.google.gson.JsonArray;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ApiEndpoints {
-    @GET("customers")
-    Call<JsonElement> getCustomers();
+    @GET("api/customers")
+    Call<JsonArray> getCustomers();
+
+    @PUT("api/customers/{id}")
+    Call<Customer> updateCustomer(@Path("id") int id, @Body Customer updatedCustomer);
 
 //    // Example GET request with a dynamic ID
 //    @GET("users/{id}")
