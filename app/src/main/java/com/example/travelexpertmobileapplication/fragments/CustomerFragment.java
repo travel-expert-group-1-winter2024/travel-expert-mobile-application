@@ -1,6 +1,5 @@
-package com.example.travelexpertmobileapplication;
+package com.example.travelexpertmobileapplication.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,18 +12,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.travelexpertmobileapplication.Models.Customer;
+import com.example.travelexpertmobileapplication.models.Customer;
+import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.utils.ApiClient;
 import com.example.travelexpertmobileapplication.utils.ApiEndpoints;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 

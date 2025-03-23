@@ -1,6 +1,4 @@
-package com.example.travelexpertmobileapplication.Models;
-
-import com.google.gson.annotations.SerializedName;
+package com.example.travelexpertmobileapplication.models;
 
 public class Customer {
     private int customerid;
