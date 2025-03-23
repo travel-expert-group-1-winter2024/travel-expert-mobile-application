@@ -1,4 +1,4 @@
-package com.example.travelexpertmobileapplication;
+package com.example.travelexpertmobileapplication.fragments;
 
 import android.os.Bundle;
 
@@ -13,7 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.travelexpertmobileapplication.Models.Customer;
+import com.example.travelexpertmobileapplication.models.Customer;
+import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.utils.ApiClient;
 import com.example.travelexpertmobileapplication.utils.ApiEndpoints;
 
