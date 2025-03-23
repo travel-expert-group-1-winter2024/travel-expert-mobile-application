@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Package Name -->
+    <TextView
+        android:id="@+id/tvPackageNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Package Name"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etPackageName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter package name"
+        android:enabled="false" /> <!-- Disabled by default -->
+
+    <!-- Package Description -->
+    <TextView
+        android:id="@+id/tvPackageDescLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Package Description"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/etPackageDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter package description"
+        android:enabled="false" /> <!-- Disabled by default -->
+
+    <!-- Package Price -->
+    <TextView
+        android:id="@+id/tvPackagePriceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Package Price"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/etPackagePrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter package price"
+        android:inputType="numberDecimal"
+        android:enabled="false" /> <!-- Disabled by default -->
+
+    <!-- Agency Commission Price -->
+    <TextView
+        android:id="@+id/tvPkgagencycommissionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Agency Commission"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/etPkgagencycommission"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter agency commission"
+        android:inputType="numberDecimal"
+        android:enabled="false" /> <!-- Disabled by default -->
+
+    <!-- Start Date -->
+    <TextView
+        android:id="@+id/tvStartDateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Date"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/etStartDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:clickable="true"
+        android:hint="Enter start date (e.g., 2023-12-01)"
+        android:enabled="false" /> <!-- Disabled by default -->
+
+    <!-- End Date -->
+    <TextView
+        android:id="@+id/tvEndDateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End Date"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/etEndDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:clickable="true"
+        android:hint="Enter end date (e.g., 2023-12-10)"
+        android:enabled="false" /> <!-- Disabled by default -->
+
+    <!-- Product Supplier Label -->
+    <TextView
+        android:id="@+id/tvProductSupplierLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Product Supplier"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <!-- Product Supplier Spinner -->
+    <Spinner
+        android:id="@+id/spinnerProductSuppliers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:prompt="@string/select_product_supplier"
+        android:visibility="gone" /> <!-- Hidden by default -->
+
+    <!-- ListView to display selected ProductSuppliers -->
+    <ListView
+        android:id="@+id/listViewProductSuppliers"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:isScrollContainer="true"
+        android:nestedScrollingEnabled="true" />
+
+    <!-- Button Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp">
+
+        <!-- Edit Button -->
+        <Button
+            android:id="@+id/btnEdit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Edit" />
+
+        <!-- Delete Button -->
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Delete" />
+    </LinearLayout>
+
+    <!-- Save, Cancel, Delete Buttons (Hidden by Default) -->
+    <LinearLayout
+        android:id="@+id/llEditButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp"
+        android:visibility="gone"> <!-- Hidden by default -->
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Save" />
+
+        <!-- Cancel Button -->
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancel" />
+    </LinearLayout>
+
+</LinearLayout>
