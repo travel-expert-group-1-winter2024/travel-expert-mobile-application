@@ -1,16 +1,11 @@
-package com.example.travelexpertmobileapplication.utils;
+package com.example.travelexpertmobileapplication.network.api;
 
-import com.example.travelexpertmobileapplication.Models.Customer;
 import com.google.gson.JsonElement;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
 
-public interface ApiEndpoints {
+public interface CustomerAPIService {
     @GET("customers")
     Call<JsonElement> getCustomers();
 

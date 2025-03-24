@@ -6,7 +6,6 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,15 +14,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.travelexpertmobileapplication.Models.Customer;
-import com.example.travelexpertmobileapplication.utils.ApiClient;
-import com.example.travelexpertmobileapplication.utils.ApiEndpoints;
+import com.example.travelexpertmobileapplication.network.ApiClient;
+import com.example.travelexpertmobileapplication.network.api.CustomerAPIService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -75,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void fetchCustomers() {
-        ApiEndpoints apiService = ApiClient.getClient().create(ApiEndpoints.class);
+        CustomerAPIService apiService = ApiClient.getClient().create(CustomerAPIService.class);
 
         apiService.getCustomers().enqueue(new Callback<JsonElement>() {
             @Override

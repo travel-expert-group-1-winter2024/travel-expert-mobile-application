@@ -1,4 +1,4 @@
-package com.example.travelexpertmobileapplication.utils;
+package com.example.travelexpertmobileapplication.network;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
