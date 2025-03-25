@@ -1,6 +1,7 @@
 package com.example.travelexpertmobileapplication.model;
 
 public class Customer {
+    private int customerid;
     private String custfirstname;
     private String custlastname;
     private String custaddress;
@@ -11,6 +12,15 @@ public class Customer {
     private String custhomephone;
     private String custbusphone;
     private String custemail;
+    private int agentId;
+
+    public int getCustomerid() {
+        return customerid;
+    }
+
+    public void setCustomerid(int customerid) {
+        this.customerid = customerid;
+    }
 
     public String getCustfirstname() {
         return custfirstname;
@@ -90,5 +100,13 @@ public class Customer {
 
     public void setCustemail(String custemail) {
         this.custemail = custemail;
+    }
+
+    public int getAgentId() {
+        return agentId;
+    }
+
+    public void setAgentId(int agentId) {
+        this.agentId = agentId;
     }
 }
