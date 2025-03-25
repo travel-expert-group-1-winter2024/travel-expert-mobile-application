@@ -41,6 +41,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -56,6 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
     ImageView imgProfile;
     Bitmap bitmapImage;
     ArrayAdapter<Agency> adapter;
+    String imagePath;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_PICK = 2;
@@ -118,6 +123,13 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
+                    String location = response.headers().get("Location");
+                    Long agentId = extractAgentIdFromLocationHeader(location);
+
+                    if (agentId != null && imagePath != null) {
+                        uploadImage(imagePath, agentId);
+                    }
+
                     Toast.makeText(SignUpActivity.this, "Agent registered successfully", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
@@ -128,6 +140,30 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("Error", t.getMessage());
+            }
+        });
+    }
+
+    private void uploadImage(String imagePath, Long agentId) {
+
+        File file = new File(imagePath);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+
+        Call<ResponseBody> call = agentAPIService.uploadAgentPhoto(agentId, body);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Log.d("ImageUpload", "Success");
+                } else {
+                    Log.e("ImageUpload", "Failed: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("ImageUpload", "Error: " + t.getMessage());
             }
         });
     }
@@ -269,11 +305,22 @@ public class SignUpActivity extends AppCompatActivity {
             mediaScanIntent.setData(contentUri);
             sendBroadcast(mediaScanIntent);
 
-            Log.e("ImageSave", "Image saved to " + imageFile.getAbsolutePath());
+            imagePath = imageFile.getAbsolutePath();
+
             Toast.makeText(this, "Image saved to " + imageFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             Log.e("ImageSave", "Error saving image", e);
             Toast.makeText(this, "Error saving image", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private Long extractAgentIdFromLocationHeader(String location) {
+        if (location == null || location.isEmpty()) return null;
+        try {
+            String[] parts = location.split("/");
+            return Long.parseLong(parts[parts.length - 1]);
+        } catch (Exception e) {
+            Log.e("AgentIdParse", "Failed to parse agent ID from location: " + location, e);
+            return null;
         }
     }
 }
