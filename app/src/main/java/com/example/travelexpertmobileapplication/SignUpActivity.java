@@ -3,12 +3,13 @@ package com.example.travelexpertmobileapplication;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -17,8 +18,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -29,6 +28,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.travelexpertmobileapplication.dto.Agency.AgencyResponse;
+import com.example.travelexpertmobileapplication.model.Agency;
+import com.example.travelexpertmobileapplication.network.ApiClient;
+import com.example.travelexpertmobileapplication.network.api.AgencyAPIService;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,13 +40,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class SignUpActivity extends AppCompatActivity {
     EditText etFirstName, etMiddleInitial, etLastName, etPhoneNumber, etEmail;
     Spinner spinnerAgency;
     Button btnSubmit;
     ImageButton btnBack;
+    AgencyAPIService agencyAPIService;
+    AgencyResponse agencyResponse;
     ImageView imgProfile;
     Bitmap bitmapImage;
+    ArrayAdapter<Agency> adapter;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_PICK = 2;
@@ -69,9 +80,43 @@ public class SignUpActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         imgProfile = findViewById(R.id.imgProfile);
 
+        agencyAPIService = ApiClient.getClient().create(AgencyAPIService.class);
+
         // Back Button Click
         btnBack.setOnClickListener(v -> finish());
         imgProfile.setOnClickListener(v -> showImagePickerDialog());
+
+        loadAgency();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadAgency();
+    }
+
+    private void loadAgency() {
+        agencyAPIService.getAllAgencies().enqueue(new Callback<AgencyResponse>() {
+            @Override
+            public void onResponse(Call<AgencyResponse> call, Response<AgencyResponse> response) {
+                if (response.isSuccessful()) {
+                    // if response is successful, store the content in the employee list
+                    agencyResponse = response.body();
+                    adapter = new ArrayAdapter<>(
+                            SignUpActivity.this,
+                            android.R.layout.simple_spinner_item,
+                            agencyResponse.getEmbedded().agencies
+                    );
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerAgency.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AgencyResponse> call, Throwable t) {
+                Log.e("Error", t.getMessage());
+            }
+        });
     }
 
     private void showImagePickerDialog() {
@@ -151,7 +196,6 @@ public class SignUpActivity extends AppCompatActivity {
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
                 imgProfile.setImageBitmap(imageBitmap);
                 saveImageToDrive(imageBitmap);
-
             } else if (requestCode == REQUEST_IMAGE_PICK) {
                 // Image selected from gallery
                 Uri selectedImageUri = data.getData();
@@ -161,17 +205,39 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void saveImageToDrive(Bitmap bitmapImage) {
+        if (bitmapImage == null) {
+            Log.e("ImageSave", "Bitmap is null!");
+            return;
+        }
+
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageName = "image_" + timestamp + ".jpg";
+        String imageName = "image_" + timestamp;
 
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File imageFile = new File(storageDir, imageName);
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        if (storageDir != null && !storageDir.exists()) {
+            boolean created = storageDir.mkdirs();
+            Log.d("ImageSave", "Pictures folder created: " + created);
+        }
 
-        try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+        try {
+            //create image file
+            File imageFile = File.createTempFile(imageName, ".jpg",storageDir);
+            //write image to file
+            FileOutputStream fos = new FileOutputStream(imageFile);
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+
+            // Make image visible in Gallery
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(imageFile);
+            mediaScanIntent.setData(contentUri);
+            sendBroadcast(mediaScanIntent);
+
+            Log.e("ImageSave", "Image saved to " + imageFile.getAbsolutePath());
             Toast.makeText(this, "Image saved to " + imageFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("ImageSave", "Error saving image", e);
             Toast.makeText(this, "Error saving image", Toast.LENGTH_SHORT).show();
         }
     }
