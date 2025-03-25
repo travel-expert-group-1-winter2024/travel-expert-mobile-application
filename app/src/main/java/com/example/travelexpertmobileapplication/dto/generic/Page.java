@@ -1,4 +1,4 @@
-package com.example.travelexpertmobileapplication.dto.Generic;
+package com.example.travelexpertmobileapplication.dto.generic;
 
 public class Page {
     public int size;

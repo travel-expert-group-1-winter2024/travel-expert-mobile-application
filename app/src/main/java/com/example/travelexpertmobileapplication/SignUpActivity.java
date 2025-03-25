@@ -28,7 +28,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.travelexpertmobileapplication.dto.Agency.AgencyResponse;
+import com.example.travelexpertmobileapplication.dto.agency.AgencyListResponse;
+import com.example.travelexpertmobileapplication.dto.generic.GenericResponse;
 import com.example.travelexpertmobileapplication.model.Agency;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgencyAPIService;
@@ -38,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,7 +50,7 @@ public class SignUpActivity extends AppCompatActivity {
     Button btnSubmit;
     ImageButton btnBack;
     AgencyAPIService agencyAPIService;
-    AgencyResponse agencyResponse;
+    AgencyListResponse agencyResponse;
     ImageView imgProfile;
     Bitmap bitmapImage;
     ArrayAdapter<Agency> adapter;
@@ -96,24 +96,22 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void loadAgency() {
-        agencyAPIService.getAllAgencies().enqueue(new Callback<AgencyResponse>() {
+        agencyAPIService.getAllAgencies().enqueue(new Callback<AgencyListResponse>() {
             @Override
-            public void onResponse(Call<AgencyResponse> call, Response<AgencyResponse> response) {
-                if (response.isSuccessful()) {
-                    // if response is successful, store the content in the employee list
+            public void onResponse(Call<AgencyListResponse> call, Response<AgencyListResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
                     agencyResponse = response.body();
                     adapter = new ArrayAdapter<>(
                             SignUpActivity.this,
                             android.R.layout.simple_spinner_item,
                             agencyResponse.getEmbedded().agencies
                     );
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerAgency.setAdapter(adapter);
                 }
             }
 
             @Override
-            public void onFailure(Call<AgencyResponse> call, Throwable t) {
+            public void onFailure(Call<AgencyListResponse> call, Throwable t) {
                 Log.e("Error", t.getMessage());
             }
         });
