@@ -29,10 +29,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.travelexpertmobileapplication.dto.agency.AgencyListResponse;
-import com.example.travelexpertmobileapplication.dto.generic.GenericResponse;
+import com.example.travelexpertmobileapplication.dto.agent.CreateAgentRequestDTO;
 import com.example.travelexpertmobileapplication.model.Agency;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgencyAPIService;
+import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,6 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
     Button btnSubmit;
     ImageButton btnBack;
     AgencyAPIService agencyAPIService;
+    AgentAPIService agentAPIService;
     AgencyListResponse agencyResponse;
     ImageView imgProfile;
     Bitmap bitmapImage;
@@ -81,10 +83,12 @@ public class SignUpActivity extends AppCompatActivity {
         imgProfile = findViewById(R.id.imgProfile);
 
         agencyAPIService = ApiClient.getClient().create(AgencyAPIService.class);
+        agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
 
         // Back Button Click
         btnBack.setOnClickListener(v -> finish());
         imgProfile.setOnClickListener(v -> showImagePickerDialog());
+        btnSubmit.setOnClickListener(v -> submit());
 
         loadAgency();
     }
@@ -93,6 +97,39 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadAgency();
+    }
+
+    // handle submit button click
+    private void submit() {
+        String firstName = etFirstName.getText().toString();
+        String middleInitial = etMiddleInitial.getText().toString();
+        String lastName = etLastName.getText().toString();
+        String phoneNumber = etPhoneNumber.getText().toString();
+        String email = etEmail.getText().toString();
+        Agency agency = (Agency) spinnerAgency.getSelectedItem();
+
+        if (firstName.isEmpty() || lastName.isEmpty() || phoneNumber.isEmpty() || email.isEmpty()) {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Call<Void> call = agentAPIService.createAgent(new CreateAgentRequestDTO(firstName, middleInitial, lastName, phoneNumber, email, (long) agency.getId()));
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(SignUpActivity.this, "Agent registered successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("Error", t.getMessage());
+            }
+        });
     }
 
     private void loadAgency() {
@@ -219,7 +256,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         try {
             //create image file
-            File imageFile = File.createTempFile(imageName, ".jpg",storageDir);
+            File imageFile = File.createTempFile(imageName, ".jpg", storageDir);
             //write image to file
             FileOutputStream fos = new FileOutputStream(imageFile);
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
