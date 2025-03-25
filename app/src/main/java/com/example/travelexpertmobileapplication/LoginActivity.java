@@ -13,7 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.travelexpertmobileapplication.Models.Customer;
+import com.example.travelexpertmobileapplication.model.Customer;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.CustomerAPIService;
 import com.google.gson.Gson;
