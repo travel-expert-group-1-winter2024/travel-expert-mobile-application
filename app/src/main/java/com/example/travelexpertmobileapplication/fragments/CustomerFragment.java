@@ -15,7 +15,7 @@ import android.widget.ListView;
 import com.example.travelexpertmobileapplication.model.Customer;
 import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.network.ApiClient;
-import com.example.travelexpertmobileapplication.network.api.ApiEndpoints;
+import com.example.travelexpertmobileapplication.network.api.CustomerAPIService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
@@ -61,7 +61,7 @@ public class CustomerFragment extends Fragment {
     }
 
     private void fetchCustomers() {
-        ApiEndpoints apiService = ApiClient.getClient().create(ApiEndpoints.class);
+        CustomerAPIService apiService = ApiClient.getClient().create(CustomerAPIService.class);
 
         apiService.getCustomers().enqueue(new Callback<JsonArray>() {
             @Override
