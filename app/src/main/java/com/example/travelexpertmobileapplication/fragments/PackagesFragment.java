@@ -12,14 +12,12 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.models.Package;
-import com.example.travelexpertmobileapplication.utils.ApiClient;
-import com.example.travelexpertmobileapplication.utils.ApiEndpoints;
+import com.example.travelexpertmobileapplication.model.Package;
+import com.example.travelexpertmobileapplication.network.ApiClient;
+import com.example.travelexpertmobileapplication.network.api.PackageAPIService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +77,7 @@ public class PackagesFragment extends Fragment {
     }
 
     private void fetchPackages() {
-        ApiEndpoints apiService = ApiClient.getClient().create(ApiEndpoints.class);
+        PackageAPIService apiService = ApiClient.getClient().create(PackageAPIService.class);
 
         apiService.getPackages().enqueue(new Callback<JsonArray>() {
             @Override
