@@ -1,4 +1,4 @@
-package com.example.travelexpertmobileapplication.models;
+package com.example.travelexpertmobileapplication.model;
 
 public class Customer {
     private int customerid;

@@ -13,10 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.travelexpertmobileapplication.models.Customer;
+import com.example.travelexpertmobileapplication.model.Customer;
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.utils.ApiClient;
-import com.example.travelexpertmobileapplication.utils.ApiEndpoints;
+import com.example.travelexpertmobileapplication.network.ApiClient;
+import com.example.travelexpertmobileapplication.network.api.CustomerAPIService;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -129,7 +129,7 @@ public class CustomerDetailsFragment extends Fragment {
         updatedCustomerDTO.setAgentId(Integer.parseInt(String.valueOf(etAgentID.getText())));
         updatedCustomerDTO.setCustomerid(customerID);
         // Create Retrofit instance
-        ApiEndpoints apiService = ApiClient.getClient().create(ApiEndpoints.class);
+        CustomerAPIService apiService = ApiClient.getClient().create(CustomerAPIService.class);
 
         // Make the PUT request to update the customer
         Call<Customer> call = apiService.updateCustomer(customerID, updatedCustomerDTO);

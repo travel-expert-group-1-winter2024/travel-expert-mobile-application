@@ -32,7 +32,7 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.logging.interceptor)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

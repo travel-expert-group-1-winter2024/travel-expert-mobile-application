@@ -1,8 +1,7 @@
-package com.example.travelexpertmobileapplication.models;
+package com.example.travelexpertmobileapplication.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.List;
 
 public class Package implements Serializable {

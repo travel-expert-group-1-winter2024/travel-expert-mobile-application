@@ -1,10 +1,10 @@
 package com.example.travelexpertmobileapplication.utils;
 
-import com.example.travelexpertmobileapplication.models.Customer;
+import com.example.travelexpertmobileapplication.model.Customer;
 import com.google.gson.JsonArray;
-import com.example.travelexpertmobileapplication.models.Package;
+import com.example.travelexpertmobileapplication.model.Package;
 import com.google.gson.JsonObject;
-import com.example.travelexpertmobileapplication.models.SupplierContact;
+import com.example.travelexpertmobileapplication.model.SupplierContact;
 
 
 import retrofit2.Call;
