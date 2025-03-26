@@ -26,10 +26,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.models.Package;
-import com.example.travelexpertmobileapplication.models.ProductSupplier;
-import com.example.travelexpertmobileapplication.utils.ApiClient;
-import com.example.travelexpertmobileapplication.utils.ApiEndpoints;
+import com.example.travelexpertmobileapplication.model.Package;
+import com.example.travelexpertmobileapplication.model.ProductSupplier;
+import com.example.travelexpertmobileapplication.network.ApiClient;
+import com.example.travelexpertmobileapplication.network.api.PackageAPIService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -333,7 +333,7 @@ public class PackageDetailsFragment extends Fragment {
 
     // Fetch ProductSuppliers from the service
     private void fetchProductSuppliers() {
-        ApiEndpoints apiService = ApiClient.getClient().create(ApiEndpoints.class);
+        PackageAPIService apiService = ApiClient.getClient().create(PackageAPIService.class);
 
         apiService.getAllProductSuppliers().enqueue(new Callback<JsonArray>() {
             @Override
@@ -412,7 +412,7 @@ public class PackageDetailsFragment extends Fragment {
         jsonObject.remove("packageid");
 
         // Call the API to add the package
-        ApiEndpoints apiService = ApiClient.getClient().create(ApiEndpoints.class);
+        PackageAPIService apiService = ApiClient.getClient().create(PackageAPIService.class);
         Call<Package> call = apiService.createPackage(jsonObject);
 
         call.enqueue(new Callback<Package>() {
@@ -484,7 +484,7 @@ public class PackageDetailsFragment extends Fragment {
 
     private void deletePackage(){
         // Call the API to update the package
-        ApiEndpoints apiService = ApiClient.getClient().create(ApiEndpoints.class);
+        PackageAPIService apiService = ApiClient.getClient().create(PackageAPIService.class);
         Call<Void> call = apiService.deletePackage(packageDetails.getPackageid());
 
         call.enqueue(new Callback<Void>() {
@@ -567,7 +567,7 @@ public class PackageDetailsFragment extends Fragment {
         Log.d("Updated Package", "Sending package: " + jsonObject.toString());
 
         // Call the API to update the package
-        ApiEndpoints apiService = ApiClient.getClient().create(ApiEndpoints.class);
+        PackageAPIService apiService = ApiClient.getClient().create(PackageAPIService.class);
         Call<Package> call = apiService.updatePackage(packageDetails.getPackageid(), jsonObject);
 
         call.enqueue(new Callback<Package>() {

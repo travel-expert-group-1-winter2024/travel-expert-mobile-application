@@ -1,4 +1,4 @@
-package com.example.travelexpertmobileapplication.models;
+package com.example.travelexpertmobileapplication.model;
 
 public class SupplierContact {
     private int supplierContactId;
