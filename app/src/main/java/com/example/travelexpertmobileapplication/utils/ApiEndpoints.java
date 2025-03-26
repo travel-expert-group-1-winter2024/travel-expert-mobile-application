@@ -4,6 +4,8 @@ import com.example.travelexpertmobileapplication.models.Customer;
 import com.google.gson.JsonArray;
 import com.example.travelexpertmobileapplication.models.Package;
 import com.google.gson.JsonObject;
+import com.example.travelexpertmobileapplication.models.SupplierContact;
+
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -34,6 +36,19 @@ public interface ApiEndpoints {
 
     @DELETE("/packages/{id}")
     Call<Void> deletePackage(@Path("id") int id);
+
+    //  Endpoints for Product and Supplier
+
+    @GET("/products")
+    Call<JsonArray> getProducts();
+
+    @GET("/suppliercontacts")
+    Call<JsonArray> getSupplierContacts();
+
+    @PUT("/suppliercontacts/{id}")
+    Call<SupplierContact> updateSupplierContact(@Path("id") int id, @Body SupplierContact updatedContact);
+
+
 //    // Example GET request with a dynamic ID
 //    @GET("users/{id}")
 //    Call<User> getUserById(@Path("id") int id);
