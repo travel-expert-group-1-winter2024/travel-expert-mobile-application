@@ -86,14 +86,12 @@ public class CustomerFragment extends Fragment {
                     // Notify adapter of data change
                     adapter.notifyDataSetChanged();
                 } else {
-                    Log.e("API Error", "Response not successful: " + response.code());
                     Timber.e("Response not successful: %s", response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<JsonArray> call, Throwable t) {
-                Log.e("API Error", "Failed to fetch customers: " + t.getMessage());
                 Timber.e(t, "Failed to fetch customers");
             }
         });
