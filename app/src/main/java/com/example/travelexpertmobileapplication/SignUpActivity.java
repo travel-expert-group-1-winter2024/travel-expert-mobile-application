@@ -30,10 +30,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.travelexpertmobileapplication.dto.agency.AgencyListResponse;
 import com.example.travelexpertmobileapplication.dto.agent.CreateAgentRequestDTO;
+import com.example.travelexpertmobileapplication.dto.user.SignUpRequestDTO;
+import com.example.travelexpertmobileapplication.dto.user.SignUpResponseDTO;
 import com.example.travelexpertmobileapplication.model.Agency;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgencyAPIService;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
+import com.example.travelexpertmobileapplication.network.api.UserAPIService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,12 +54,13 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class SignUpActivity extends AppCompatActivity {
-    EditText etFirstName, etMiddleInitial, etLastName, etPhoneNumber, etEmail;
+    EditText etFirstName, etMiddleInitial, etLastName, etPhoneNumber, etEmail, etPassword;
     Spinner spinnerAgency;
     Button btnSubmit;
     ImageButton btnBack;
     AgencyAPIService agencyAPIService;
     AgentAPIService agentAPIService;
+    UserAPIService userAPIService;
     AgencyListResponse agencyResponse;
     ImageView imgProfile;
     Bitmap bitmapImage;
@@ -83,6 +87,7 @@ public class SignUpActivity extends AppCompatActivity {
         etLastName = findViewById(R.id.etLastName);
         etPhoneNumber = findViewById(R.id.etPhoneNumber);
         etEmail = findViewById(R.id.etEmail);
+        etPassword = findViewById(R.id.etPassword);
         spinnerAgency = findViewById(R.id.spnAgency);
         btnSubmit = findViewById(R.id.btnSubmit);
         btnBack = findViewById(R.id.btnBack);
@@ -119,31 +124,55 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
 
-        Call<Void> call = agentAPIService.createAgent(new CreateAgentRequestDTO(firstName, middleInitial, lastName, phoneNumber, email, (long) agency.getId()));
-        call.enqueue(new Callback<Void>() {
+        // create user and agent
+        Call<SignUpResponseDTO> createAgentCall = userAPIService.createAgent(new SignUpRequestDTO(email, etPassword.getText().toString()));
+        createAgentCall.enqueue(new Callback<SignUpResponseDTO>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    String location = response.headers().get("Location");
-                    Long agentId = extractAgentIdFromLocationHeader(location);
+            public void onResponse(Call<SignUpResponseDTO> call, Response<SignUpResponseDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Timber.d("User created successfully");
+                    String userId = response.body().getId(); // get user ID from response body
 
-                    if (agentId != null && imagePath != null) {
-                        uploadImage(imagePath, agentId);
-                    }
+                    // create Agent
+                    Call<Void> callAgent = agentAPIService.createAgent(
+                            new CreateAgentRequestDTO(firstName, middleInitial, lastName, phoneNumber, email, userId, (long) agency.getId())
+                    );
+                    callAgent.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                                String location = response.headers().get("Location");
+                                Long agentId = extractAgentIdFromLocationHeader(location);
 
-                    Toast.makeText(SignUpActivity.this, "Agent registered successfully", Toast.LENGTH_SHORT).show();
-                    Timber.i("Agent registered successfully");
-                    finish();
+                                if (agentId != null && imagePath != null) {
+                                    uploadImage(imagePath, agentId);
+                                }
+
+                                Toast.makeText(SignUpActivity.this, "Agent registered successfully", Toast.LENGTH_SHORT).show();
+                                Timber.i("Agent registered successfully");
+                                finish();
+                            } else {
+                                Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
+                                Timber.e("Failed to register agent: %s", response.code());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
+                            Timber.e(t, "Failed to register agent");
+                        }
+                    });
                 } else {
-                    Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
-                    Timber.e("Failed to register agent: %s", response.code());
+                    Toast.makeText(SignUpActivity.this, "Failed to register user", Toast.LENGTH_SHORT).show();
+                    Timber.e("Failed to register user: %s", response.code());
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
-                Timber.e(t, "Failed to register agent");
+            public void onFailure(Call<SignUpResponseDTO> call, Throwable t) {
+                Toast.makeText(SignUpActivity.this, "Failed to register user", Toast.LENGTH_SHORT).show();
+                Timber.e(t, "Failed to register user");
             }
         });
     }
