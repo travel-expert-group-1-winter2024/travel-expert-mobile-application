@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -95,6 +94,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         agencyAPIService = ApiClient.getClient().create(AgencyAPIService.class);
         agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
+        userAPIService = ApiClient.getClient().create(UserAPIService.class);
 
         // Back Button Click
         btnBack.setOnClickListener(v -> finish());
@@ -117,58 +117,66 @@ public class SignUpActivity extends AppCompatActivity {
         String lastName = etLastName.getText().toString();
         String phoneNumber = etPhoneNumber.getText().toString();
         String email = etEmail.getText().toString();
+        String password = etPassword.getText().toString();
         Agency agency = (Agency) spinnerAgency.getSelectedItem();
 
-        if (firstName.isEmpty() || lastName.isEmpty() || phoneNumber.isEmpty() || email.isEmpty()) {
+        if (firstName.isEmpty() || lastName.isEmpty() || phoneNumber.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // create user and agent
-        Call<SignUpResponseDTO> createAgentCall = userAPIService.createAgent(new SignUpRequestDTO(email, etPassword.getText().toString()));
+        createAgentAndUser(firstName, middleInitial, lastName, phoneNumber, email, password, agency);
+    }
+
+    private void createAgentAndUser(String firstName, String middleInitial, String lastName, String phoneNumber, String email, String password, Agency agency) {
+        Call<Void> callAgent = agentAPIService.createAgent(
+                new CreateAgentRequestDTO(firstName, middleInitial, lastName, phoneNumber, email, (long) agency.getId())
+        );
+        callAgent.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    String location = response.headers().get("Location");
+                    int agentId = extractAgentIdFromLocationHeader(location);
+
+                    // create user
+                    createUser(email, password, agentId);
+
+                    if (agentId != -1 && imagePath != null) {
+                        // upload image
+                        uploadImage(imagePath, agentId);
+                    }
+
+                    Toast.makeText(SignUpActivity.this, "Agent registered successfully", Toast.LENGTH_SHORT).show();
+                    Timber.i("Agent registered successfully");
+                    finish();
+                } else {
+                    Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
+                    Timber.e("Failed to register agent: %s", response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
+                Timber.e(t, "Failed to register agent");
+            }
+        });
+    }
+
+    private void createUser(String email, String password, int agentId) {
+        Call<SignUpResponseDTO> createAgentCall = userAPIService.createAgent(new SignUpRequestDTO(email, password, agentId));
         createAgentCall.enqueue(new Callback<SignUpResponseDTO>() {
             @Override
             public void onResponse(Call<SignUpResponseDTO> call, Response<SignUpResponseDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Timber.d("User created successfully");
-                    String userId = response.body().getId(); // get user ID from response body
-
-                    // create Agent
-                    Call<Void> callAgent = agentAPIService.createAgent(
-                            new CreateAgentRequestDTO(firstName, middleInitial, lastName, phoneNumber, email, userId, (long) agency.getId())
-                    );
-                    callAgent.enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if (response.isSuccessful()) {
-                                String location = response.headers().get("Location");
-                                Long agentId = extractAgentIdFromLocationHeader(location);
-
-                                if (agentId != null && imagePath != null) {
-                                    uploadImage(imagePath, agentId);
-                                }
-
-                                Toast.makeText(SignUpActivity.this, "Agent registered successfully", Toast.LENGTH_SHORT).show();
-                                Timber.i("Agent registered successfully");
-                                finish();
-                            } else {
-                                Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
-                                Timber.e("Failed to register agent: %s", response.code());
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
-                            Timber.e(t, "Failed to register agent");
-                        }
-                    });
                 } else {
                     Toast.makeText(SignUpActivity.this, "Failed to register user", Toast.LENGTH_SHORT).show();
                     Timber.e("Failed to register user: %s", response.code());
                 }
             }
-
             @Override
             public void onFailure(Call<SignUpResponseDTO> call, Throwable t) {
                 Toast.makeText(SignUpActivity.this, "Failed to register user", Toast.LENGTH_SHORT).show();
@@ -177,7 +185,7 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    private void uploadImage(String imagePath, Long agentId) {
+    private void uploadImage(String imagePath, int agentId) {
 
         File file = new File(imagePath);
         RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
@@ -348,14 +356,15 @@ public class SignUpActivity extends AppCompatActivity {
             Timber.e(e, "Error saving image");
         }
     }
-    private Long extractAgentIdFromLocationHeader(String location) {
-        if (location == null || location.isEmpty()) return null;
+
+    private int extractAgentIdFromLocationHeader(String location) {
+        if (location == null || location.isEmpty()) return -1;
         try {
             String[] parts = location.split("/");
-            return Long.parseLong(parts[parts.length - 1]);
+            return Integer.parseInt(parts[parts.length - 1]);
         } catch (Exception e) {
             Timber.e("Failed to parse agent ID from location: %s", location);
-            return null;
+            return -1;
         }
     }
 }
