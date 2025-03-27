@@ -1,16 +1,21 @@
 package com.example.travelexpertmobileapplication;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 import com.example.travelexpertmobileapplication.fragments.HomeFragment;
-import com.example.travelexpertmobileapplication.fragments.MapFragment;
 import com.example.travelexpertmobileapplication.fragments.PackagesFragment;
 import com.example.travelexpertmobileapplication.fragments.ProfileFragment;
+import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jakewharton.threetenabp.AndroidThreeTen;
+
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,7 +25,11 @@ public class MainActivity extends AppCompatActivity {
         AndroidThreeTen.init(this);
         setContentView(R.layout.activity_main);
 
+        // Initialize components
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+
+        // TODO: uncomment this later
+//        Timber.tag("JWT").d("Retrieved token: %s", SharedPrefUtil.getToken(this));
 
         // load the home fragment by default
         if (savedInstanceState == null) {
