@@ -142,7 +142,6 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Log.e("Error", t.getMessage());
                 Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
                 Timber.e(t, "Failed to register agent");
             }
@@ -160,16 +159,14 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    Log.d("ImageUpload", "Success");
+                    Timber.i("Image uploaded successfully");
                 } else {
-                    Log.e("ImageUpload", "Failed: " + response.code());
                     Timber.e("Failed to upload image: %s", response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("ImageUpload", "Error: " + t.getMessage());
                 Timber.e(t, "Failed to upload image");
             }
         });
@@ -192,7 +189,7 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<AgencyListResponse> call, Throwable t) {
-                Log.e("Error", t.getMessage());
+                Timber.e(t, "Failed to fetch agencies");
             }
         });
     }
@@ -285,7 +282,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void saveImageToDrive(Bitmap bitmapImage) {
         if (bitmapImage == null) {
-            Log.e("ImageSave", "Bitmap is null!");
+            Timber.e("Bitmap image is null");
             return;
         }
 
@@ -295,7 +292,7 @@ public class SignUpActivity extends AppCompatActivity {
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         if (storageDir != null && !storageDir.exists()) {
             boolean created = storageDir.mkdirs();
-            Log.d("ImageSave", "Pictures folder created: " + created);
+            Timber.i("Pictures folder created: %s", created);
         }
 
         try {
@@ -318,7 +315,6 @@ public class SignUpActivity extends AppCompatActivity {
             Toast.makeText(this, "Image saved to " + imageFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
             Timber.i("Image saved to %s", imageFile.getAbsolutePath());
         } catch (IOException e) {
-            Log.e("ImageSave", "Error saving image", e);
             Toast.makeText(this, "Error saving image", Toast.LENGTH_SHORT).show();
             Timber.e(e, "Error saving image");
         }
@@ -329,7 +325,6 @@ public class SignUpActivity extends AppCompatActivity {
             String[] parts = location.split("/");
             return Long.parseLong(parts[parts.length - 1]);
         } catch (Exception e) {
-            Log.e("AgentIdParse", "Failed to parse agent ID from location: " + location, e);
             Timber.e("Failed to parse agent ID from location: %s", location);
             return null;
         }
