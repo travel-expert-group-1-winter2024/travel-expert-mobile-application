@@ -17,7 +17,7 @@ public interface AgentAPIService {
     @Multipart
     @POST("/agents/{id}/upload")
     Call<ResponseBody> uploadAgentPhoto(
-            @Path("id") Long agentId,
+            @Path("id") int agentId,
             @Part MultipartBody.Part image
     );
 }

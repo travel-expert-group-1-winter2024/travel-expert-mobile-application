@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -15,9 +14,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.models.SupplierContact;
-import com.example.travelexpertmobileapplication.utils.ApiClient;
-import com.example.travelexpertmobileapplication.utils.ApiEndpoints;
+import com.example.travelexpertmobileapplication.model.SupplierContact;
+import com.example.travelexpertmobileapplication.network.ApiClient;
+import com.example.travelexpertmobileapplication.network.api.SupplierContactAPIService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
@@ -36,7 +35,8 @@ public class SupplierFragment extends Fragment {
     private List<String> supplierNames = new ArrayList<>();
     private List<SupplierContact> supplierList = new ArrayList<>();
 
-    public SupplierFragment() {}
+    public SupplierFragment() {
+    }
 
     @Nullable
     @Override
@@ -56,14 +56,15 @@ public class SupplierFragment extends Fragment {
     }
 
     private void fetchSuppliers() {
-        ApiEndpoints apiService = ApiClient.getClient().create(ApiEndpoints.class);
+        SupplierContactAPIService apiService = ApiClient.getClient().create(SupplierContactAPIService.class);
         apiService.getSupplierContacts().enqueue(new Callback<JsonArray>() {
             @Override
             public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     JsonArray array = response.body();
                     supplierList.clear();
-                    supplierList.addAll(new Gson().fromJson(array, new TypeToken<List<SupplierContact>>() {}.getType()));
+                    supplierList.addAll(new Gson().fromJson(array, new TypeToken<List<SupplierContact>>() {
+                    }.getType()));
 
                     supplierNames.clear();
                     for (SupplierContact sc : supplierList) {

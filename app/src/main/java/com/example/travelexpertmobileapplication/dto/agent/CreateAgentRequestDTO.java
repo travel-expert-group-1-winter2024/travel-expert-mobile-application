@@ -33,7 +33,7 @@ public class CreateAgentRequestDTO {
         this.agtBusPhone = agtBusPhone;
         this.agtEmail = agtEmail;
         this.agtPosition = "Agent"; // default value;
-        this.user = user;
+        this.user = RestUriBuilder.userUri(user);
         this.agency = RestUriBuilder.agencyUri(agencyId);
     }
 

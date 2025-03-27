@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,10 +29,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.travelexpertmobileapplication.dto.agency.AgencyListResponse;
 import com.example.travelexpertmobileapplication.dto.agent.CreateAgentRequestDTO;
+import com.example.travelexpertmobileapplication.dto.user.SignUpRequestDTO;
+import com.example.travelexpertmobileapplication.dto.user.SignUpResponseDTO;
 import com.example.travelexpertmobileapplication.model.Agency;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgencyAPIService;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
+import com.example.travelexpertmobileapplication.network.api.UserAPIService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,12 +53,13 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class SignUpActivity extends AppCompatActivity {
-    EditText etFirstName, etMiddleInitial, etLastName, etPhoneNumber, etEmail;
+    EditText etFirstName, etMiddleInitial, etLastName, etPhoneNumber, etEmail, etPassword;
     Spinner spinnerAgency;
     Button btnSubmit;
     ImageButton btnBack;
     AgencyAPIService agencyAPIService;
     AgentAPIService agentAPIService;
+    UserAPIService userAPIService;
     AgencyListResponse agencyResponse;
     ImageView imgProfile;
     Bitmap bitmapImage;
@@ -83,6 +86,7 @@ public class SignUpActivity extends AppCompatActivity {
         etLastName = findViewById(R.id.etLastName);
         etPhoneNumber = findViewById(R.id.etPhoneNumber);
         etEmail = findViewById(R.id.etEmail);
+        etPassword = findViewById(R.id.etPassword);
         spinnerAgency = findViewById(R.id.spnAgency);
         btnSubmit = findViewById(R.id.btnSubmit);
         btnBack = findViewById(R.id.btnBack);
@@ -90,6 +94,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         agencyAPIService = ApiClient.getClient().create(AgencyAPIService.class);
         agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
+        userAPIService = ApiClient.getClient().create(UserAPIService.class);
 
         // Back Button Click
         btnBack.setOnClickListener(v -> finish());
@@ -112,22 +117,34 @@ public class SignUpActivity extends AppCompatActivity {
         String lastName = etLastName.getText().toString();
         String phoneNumber = etPhoneNumber.getText().toString();
         String email = etEmail.getText().toString();
+        String password = etPassword.getText().toString();
         Agency agency = (Agency) spinnerAgency.getSelectedItem();
 
-        if (firstName.isEmpty() || lastName.isEmpty() || phoneNumber.isEmpty() || email.isEmpty()) {
+        if (firstName.isEmpty() || lastName.isEmpty() || phoneNumber.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Call<Void> call = agentAPIService.createAgent(new CreateAgentRequestDTO(firstName, middleInitial, lastName, phoneNumber, email, (long) agency.getId()));
-        call.enqueue(new Callback<Void>() {
+        // create user and agent
+        createAgentAndUser(firstName, middleInitial, lastName, phoneNumber, email, password, agency);
+    }
+
+    private void createAgentAndUser(String firstName, String middleInitial, String lastName, String phoneNumber, String email, String password, Agency agency) {
+        Call<Void> callAgent = agentAPIService.createAgent(
+                new CreateAgentRequestDTO(firstName, middleInitial, lastName, phoneNumber, email, (long) agency.getId())
+        );
+        callAgent.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     String location = response.headers().get("Location");
-                    Long agentId = extractAgentIdFromLocationHeader(location);
+                    int agentId = extractAgentIdFromLocationHeader(location);
 
-                    if (agentId != null && imagePath != null) {
+                    // create user
+                    createUser(email, password, agentId);
+
+                    if (agentId != -1 && imagePath != null) {
+                        // upload image
                         uploadImage(imagePath, agentId);
                     }
 
@@ -142,14 +159,33 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Log.e("Error", t.getMessage());
                 Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
                 Timber.e(t, "Failed to register agent");
             }
         });
     }
 
-    private void uploadImage(String imagePath, Long agentId) {
+    private void createUser(String email, String password, int agentId) {
+        Call<SignUpResponseDTO> createAgentCall = userAPIService.createAgent(new SignUpRequestDTO(email, password, agentId));
+        createAgentCall.enqueue(new Callback<SignUpResponseDTO>() {
+            @Override
+            public void onResponse(Call<SignUpResponseDTO> call, Response<SignUpResponseDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Timber.d("User created successfully");
+                } else {
+                    Toast.makeText(SignUpActivity.this, "Failed to register user", Toast.LENGTH_SHORT).show();
+                    Timber.e("Failed to register user: %s", response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<SignUpResponseDTO> call, Throwable t) {
+                Toast.makeText(SignUpActivity.this, "Failed to register user", Toast.LENGTH_SHORT).show();
+                Timber.e(t, "Failed to register user");
+            }
+        });
+    }
+
+    private void uploadImage(String imagePath, int agentId) {
 
         File file = new File(imagePath);
         RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
@@ -160,16 +196,14 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    Log.d("ImageUpload", "Success");
+                    Timber.i("Image uploaded successfully");
                 } else {
-                    Log.e("ImageUpload", "Failed: " + response.code());
                     Timber.e("Failed to upload image: %s", response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("ImageUpload", "Error: " + t.getMessage());
                 Timber.e(t, "Failed to upload image");
             }
         });
@@ -192,7 +226,7 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<AgencyListResponse> call, Throwable t) {
-                Log.e("Error", t.getMessage());
+                Timber.e(t, "Failed to fetch agencies");
             }
         });
     }
@@ -285,7 +319,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void saveImageToDrive(Bitmap bitmapImage) {
         if (bitmapImage == null) {
-            Log.e("ImageSave", "Bitmap is null!");
+            Timber.e("Bitmap image is null");
             return;
         }
 
@@ -295,7 +329,7 @@ public class SignUpActivity extends AppCompatActivity {
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         if (storageDir != null && !storageDir.exists()) {
             boolean created = storageDir.mkdirs();
-            Log.d("ImageSave", "Pictures folder created: " + created);
+            Timber.i("Pictures folder created: %s", created);
         }
 
         try {
@@ -318,20 +352,19 @@ public class SignUpActivity extends AppCompatActivity {
             Toast.makeText(this, "Image saved to " + imageFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
             Timber.i("Image saved to %s", imageFile.getAbsolutePath());
         } catch (IOException e) {
-            Log.e("ImageSave", "Error saving image", e);
             Toast.makeText(this, "Error saving image", Toast.LENGTH_SHORT).show();
             Timber.e(e, "Error saving image");
         }
     }
-    private Long extractAgentIdFromLocationHeader(String location) {
-        if (location == null || location.isEmpty()) return null;
+
+    private int extractAgentIdFromLocationHeader(String location) {
+        if (location == null || location.isEmpty()) return -1;
         try {
             String[] parts = location.split("/");
-            return Long.parseLong(parts[parts.length - 1]);
+            return Integer.parseInt(parts[parts.length - 1]);
         } catch (Exception e) {
-            Log.e("AgentIdParse", "Failed to parse agent ID from location: " + location, e);
             Timber.e("Failed to parse agent ID from location: %s", location);
-            return null;
+            return -1;
         }
     }
 }

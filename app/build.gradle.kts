@@ -44,4 +44,5 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.jakewharton.threetenabp:threetenabp:1.4.0")
     implementation ("com.jakewharton.timber:timber:4.7.1")
+    implementation ("androidx.security:security-crypto:1.1.0-alpha06")
 }
