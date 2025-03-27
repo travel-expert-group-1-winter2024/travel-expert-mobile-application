@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#fefaff">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Supplier Details"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="#181818"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:fontFamily="@font/balsamiq_sans" />
+
+    <!-- Contact ID -->
+    <TextView
+        android:id="@+id/labelContactId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Contact ID:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etSupplierContactId"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:hint="Contact ID"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toEndOf="@id/labelContactId"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1" />
+
+    <!-- First Name -->
+    <TextView
+        android:id="@+id/labelFirstName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="First Name:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etSupplierContactId"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etFirstName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="First Name"
+        app:layout_constraintTop_toBottomOf="@id/etSupplierContactId"
+        app:layout_constraintStart_toEndOf="@id/labelFirstName"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Last Name -->
+    <TextView
+        android:id="@+id/labelLastName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Last Name:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etFirstName"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etLastName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Last Name"
+        app:layout_constraintTop_toBottomOf="@id/etFirstName"
+        app:layout_constraintStart_toEndOf="@id/labelLastName"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Company -->
+    <TextView
+        android:id="@+id/labelCompany"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Company:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etLastName"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etCompany"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Company"
+        app:layout_constraintTop_toBottomOf="@id/etLastName"
+        app:layout_constraintStart_toEndOf="@id/labelCompany"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Address -->
+    <TextView
+        android:id="@+id/labelAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Address:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etCompany"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etAddress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Address"
+        app:layout_constraintTop_toBottomOf="@id/etCompany"
+        app:layout_constraintStart_toEndOf="@id/labelAddress"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- City -->
+    <TextView
+        android:id="@+id/labelCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="City:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etAddress"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etCity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="City"
+        app:layout_constraintTop_toBottomOf="@id/etAddress"
+        app:layout_constraintStart_toEndOf="@id/labelCity"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Province -->
+    <TextView
+        android:id="@+id/labelProvince"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Province:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etCity"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etProvince"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Province"
+        app:layout_constraintTop_toBottomOf="@id/etCity"
+        app:layout_constraintStart_toEndOf="@id/labelProvince"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Postal Code -->
+    <TextView
+        android:id="@+id/labelPostal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Postal Code:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etProvince"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etPostal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Postal Code"
+        app:layout_constraintTop_toBottomOf="@id/etProvince"
+        app:layout_constraintStart_toEndOf="@id/labelPostal"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Country -->
+    <TextView
+        android:id="@+id/labelCountry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Country:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etPostal"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etCountry"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Country"
+        app:layout_constraintTop_toBottomOf="@id/etPostal"
+        app:layout_constraintStart_toEndOf="@id/labelCountry"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Business Phone -->
+    <TextView
+        android:id="@+id/labelBusinessPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Business Phone:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etCountry"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etBusinessPhone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Business Phone"
+        app:layout_constraintTop_toBottomOf="@id/etCountry"
+        app:layout_constraintStart_toEndOf="@id/labelBusinessPhone"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Fax -->
+    <TextView
+        android:id="@+id/labelFax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fax:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etBusinessPhone"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etFax"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Fax"
+        app:layout_constraintTop_toBottomOf="@id/etBusinessPhone"
+        app:layout_constraintStart_toEndOf="@id/labelFax"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Email -->
+    <TextView
+        android:id="@+id/labelEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etFax"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintTop_toBottomOf="@id/etFax"
+        app:layout_constraintStart_toEndOf="@id/labelEmail"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Website -->
+    <TextView
+        android:id="@+id/labelWebsite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Website:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etEmail"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etWebsite"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Website"
+        android:inputType="textUri"
+        app:layout_constraintTop_toBottomOf="@id/etEmail"
+        app:layout_constraintStart_toEndOf="@id/labelWebsite"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Affiliation ID -->
+    <TextView
+        android:id="@+id/labelAffiliationId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Affiliation ID:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etWebsite"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etAffiliationId"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Affiliation ID"
+        app:layout_constraintTop_toBottomOf="@id/etWebsite"
+        app:layout_constraintStart_toEndOf="@id/labelAffiliationId"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Supplier ID -->
+    <TextView
+        android:id="@+id/labelSupplierId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Supplier ID:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/etAffiliationId"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etSupplierId"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Supplier ID"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/etAffiliationId"
+        app:layout_constraintStart_toEndOf="@id/labelSupplierId"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Buttons -->
+    <Button
+        android:id="@+id/btnEdit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Edit"
+        android:backgroundTint="#31AF28"
+        app:layout_constraintTop_toBottomOf="@id/etSupplierId"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnSave"
+        app:layout_constraintHorizontal_weight="1" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Save"
+        android:backgroundTint="#31AF28"
+        app:layout_constraintTop_toBottomOf="@id/etSupplierId"
+        app:layout_constraintStart_toEndOf="@id/btnEdit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
