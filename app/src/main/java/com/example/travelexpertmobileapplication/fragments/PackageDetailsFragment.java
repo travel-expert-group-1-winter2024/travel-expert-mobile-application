@@ -52,6 +52,7 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class PackageDetailsFragment extends Fragment {
 
@@ -576,14 +577,14 @@ public class PackageDetailsFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     // Package updated successfully
                     Package updatedPackageResponse = response.body();
-                    Log.d("API Success", "Package updated: " + updatedPackageResponse.toString());
+                    Timber.i("Package updated: %s", updatedPackageResponse.toString());
                     Toast.makeText(getContext(), "Package updated successfully!", Toast.LENGTH_SHORT).show();
 
                     // Navigate back to the PackageListFragment
                     navigateBackToPackageList();
                 } else {
                     // Handle API error
-                    Log.e("API Error", "Failed to update package: " + response.code());
+                    Timber.i("Failed to update package: %s", response.code());
                     Toast.makeText(getContext(), "Failed to update package. Please try again.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -591,7 +592,7 @@ public class PackageDetailsFragment extends Fragment {
             @Override
             public void onFailure(Call<Package> call, Throwable t) {
                 // Handle network failure
-                Log.e("API Error", "Failed to update package: " + t.getMessage());
+                Timber.e(t, "Failed to update package");
                 Toast.makeText(getContext(), "Network error. Please check your connection.", Toast.LENGTH_SHORT).show();
 
                 // Log the full stack trace for debugging

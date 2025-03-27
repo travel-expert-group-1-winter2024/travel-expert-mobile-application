@@ -21,6 +21,7 @@ import com.example.travelexpertmobileapplication.network.api.CustomerAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 
 public class CustomerDetailsFragment extends Fragment {
@@ -138,6 +139,7 @@ public class CustomerDetailsFragment extends Fragment {
             public void onResponse(Call<Customer> call, Response<Customer> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(getActivity(), "Customer updated successfully", Toast.LENGTH_SHORT).show();
+                    Timber.i("CUSTOMER UPDATED: %s", response.body());
                     requireActivity().getSupportFragmentManager().popBackStack();
                 } else {
                     Toast.makeText(getActivity(), "Failed to update customer", Toast.LENGTH_SHORT).show();
@@ -147,7 +149,7 @@ public class CustomerDetailsFragment extends Fragment {
             @Override
             public void onFailure(Call<Customer> call, Throwable t) {
                 Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-
+                Timber.e(t);
             }
         });
     }

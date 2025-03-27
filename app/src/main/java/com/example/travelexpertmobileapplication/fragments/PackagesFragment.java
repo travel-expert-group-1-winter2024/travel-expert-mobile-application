@@ -24,6 +24,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class PackagesFragment extends Fragment {
 
@@ -101,13 +102,13 @@ public class PackagesFragment extends Fragment {
                     // Notify adapter of data change
                     adapter.notifyDataSetChanged();
                 } else {
-                    Log.e("API Error", "Response not successful: " + response.code());
+                    Timber.e("Response not successful: %s", response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<JsonArray> call, Throwable t) {
-                Log.e("API Error", "Failed to fetch packages: " + t.getMessage());
+                Timber.e("Failed to fetch packages: %s", t.getMessage());
             }
         });
     }
@@ -116,7 +117,7 @@ public class PackagesFragment extends Fragment {
         if (position < 0 || position >= packagesList.size()) return;
 
         Package selectedPackage = packagesList.get(position);
-        Log.d("Listing Fragment", selectedPackage.toString());
+        Timber.i("Selected Package: %s", selectedPackage.toString());
         // Create a Bundle to pass data
         Bundle bundle = new Bundle();
 //        bundle.putInt("PackageID", selectedPackage.getPackageid());
