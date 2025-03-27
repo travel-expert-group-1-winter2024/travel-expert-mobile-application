@@ -1,5 +1,6 @@
 package com.example.travelexpertmobileapplication.network.api;
 
+import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.dto.user.LoginRequestDTO;
 import com.example.travelexpertmobileapplication.dto.user.LoginResponseDTO;
 import com.example.travelexpertmobileapplication.dto.user.SignUpRequestDTO;
@@ -14,5 +15,5 @@ public interface UserAPIService {
     Call<SignUpResponseDTO> createAgent(@Body SignUpRequestDTO newAgent);
 
     @POST("/api/login")
-    Call<LoginResponseDTO> login(@Body LoginRequestDTO user);
+    Call<GenericApiResponse<LoginResponseDTO>> login(@Body LoginRequestDTO user);
 }
