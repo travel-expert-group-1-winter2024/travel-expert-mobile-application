@@ -48,6 +48,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class SignUpActivity extends AppCompatActivity {
     EditText etFirstName, etMiddleInitial, etLastName, etPhoneNumber, etEmail;
@@ -131,15 +132,19 @@ public class SignUpActivity extends AppCompatActivity {
                     }
 
                     Toast.makeText(SignUpActivity.this, "Agent registered successfully", Toast.LENGTH_SHORT).show();
+                    Timber.i("Agent registered successfully");
                     finish();
                 } else {
                     Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
+                    Timber.e("Failed to register agent: %s", response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("Error", t.getMessage());
+                Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
+                Timber.e(t, "Failed to register agent");
             }
         });
     }
@@ -158,12 +163,14 @@ public class SignUpActivity extends AppCompatActivity {
                     Log.d("ImageUpload", "Success");
                 } else {
                     Log.e("ImageUpload", "Failed: " + response.code());
+                    Timber.e("Failed to upload image: %s", response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("ImageUpload", "Error: " + t.getMessage());
+                Timber.e(t, "Failed to upload image");
             }
         });
     }
@@ -232,6 +239,7 @@ public class SignUpActivity extends AppCompatActivity {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         } else {
             Toast.makeText(this, "No camera app installed", Toast.LENGTH_SHORT).show();
+            Timber.e("No camera app installed");
         }
     }
 
@@ -308,9 +316,11 @@ public class SignUpActivity extends AppCompatActivity {
             imagePath = imageFile.getAbsolutePath();
 
             Toast.makeText(this, "Image saved to " + imageFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+            Timber.i("Image saved to %s", imageFile.getAbsolutePath());
         } catch (IOException e) {
             Log.e("ImageSave", "Error saving image", e);
             Toast.makeText(this, "Error saving image", Toast.LENGTH_SHORT).show();
+            Timber.e(e, "Error saving image");
         }
     }
     private Long extractAgentIdFromLocationHeader(String location) {
@@ -320,6 +330,7 @@ public class SignUpActivity extends AppCompatActivity {
             return Long.parseLong(parts[parts.length - 1]);
         } catch (Exception e) {
             Log.e("AgentIdParse", "Failed to parse agent ID from location: " + location, e);
+            Timber.e("Failed to parse agent ID from location: %s", location);
             return null;
         }
     }

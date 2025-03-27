@@ -12,6 +12,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import timber.log.Timber;
+
 public class LoginActivity extends AppCompatActivity {
 
     EditText etUsername, etPassword;
@@ -23,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+        Timber.i("Timber logging is ready");
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -39,6 +42,9 @@ public class LoginActivity extends AppCompatActivity {
             // Get the username and password from the edit text fields
             String username = etUsername.getText().toString();
             String password = etPassword.getText().toString();
+
+            Timber.i("Logging with user %s", username);
+
             // Create an intent to start the main activity
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             // Start the main activity

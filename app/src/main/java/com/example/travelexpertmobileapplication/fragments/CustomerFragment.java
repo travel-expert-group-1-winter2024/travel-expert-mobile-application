@@ -26,6 +26,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class CustomerFragment extends Fragment {
 
@@ -86,12 +87,14 @@ public class CustomerFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                 } else {
                     Log.e("API Error", "Response not successful: " + response.code());
+                    Timber.e("Response not successful: %s", response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<JsonArray> call, Throwable t) {
                 Log.e("API Error", "Failed to fetch customers: " + t.getMessage());
+                Timber.e(t, "Failed to fetch customers");
             }
         });
     }
