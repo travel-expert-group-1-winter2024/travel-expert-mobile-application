@@ -1,66 +1,290 @@
 package com.example.travelexpertmobileapplication.fragments;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+import android.Manifest;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import com.example.travelexpertmobileapplication.R;
+import com.example.travelexpertmobileapplication.model.Place;
+import com.example.travelexpertmobileapplication.network.ApiClient;
+import com.example.travelexpertmobileapplication.network.api.PlacesAPIService;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MapFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class MapFragment extends Fragment {
+import org.jetbrains.annotations.Nullable;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.util.Arrays;
+import java.util.List;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-    public MapFragment() {
-        // Required empty public constructor
+public class MapFragment extends Fragment implements OnMapReadyCallback {
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
+
+    // Views from XML
+    private MapView mapView;
+    private GoogleMap googleMap;
+    private ProgressBar progressBar;
+
+    // Services
+    private PlacesAPIService apiService;
+    private FusedLocationProviderClient fusedLocationClient;
+    private PlacesClient placesClient;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Initialize API service using your existing pattern
+        apiService = ApiClient.getClient().create(PlacesAPIService.class);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+
+        // Initialize Places SDK for autocomplete
+        if (!Places.isInitialized()) {
+            Places.initialize(requireContext(), getString(R.string.google_maps_key));
+        }
+        placesClient = Places.createClient(requireContext());
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MapFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MapFragment newInstance(String param1, String param2) {
-        MapFragment fragment = new MapFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_map, container, false);
+
+        // Initialize MapView first
+        mapView = view.findViewById(R.id.mapView);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);  // This triggers onMapReady()
+
+        progressBar = view.findViewById(R.id.progressBar);
+
+        // Setup search with autocomplete
+        setupAutocompleteSearch(view);
+
+        return view;
+    }
+
+    private void setupAutocompleteSearch(View rootView) {
+
+        FrameLayout container = rootView.findViewById(R.id.searchContainer);
+        // Create AutocompleteSupportFragment
+        AutocompleteSupportFragment autocompleteFragment = new AutocompleteSupportFragment();
+
+        getChildFragmentManager().beginTransaction()
+                .replace(container.getId(), autocompleteFragment)
+                .commit();
+
+        // Configure the autocomplete fragment
+        autocompleteFragment.setPlaceFields(Arrays.asList(
+                com.google.android.libraries.places.api.model.Place.Field.ID,
+                com.google.android.libraries.places.api.model.Place.Field.NAME,
+                com.google.android.libraries.places.api.model.Place.Field.LAT_LNG,
+                com.google.android.libraries.places.api.model.Place.Field.ADDRESS
+        ));
+
+        // Set up the place selection listener
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull com.google.android.libraries.places.api.model.Place place) {
+                if (place.getLatLng() != null && googleMap != null) {
+                    // Move camera to selected place
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                            place.getLatLng(), 14f));
+
+                    // Add marker
+                    googleMap.clear();
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(place.getLatLng())
+                            .title(place.getName())
+                            .snippet(place.getAddress()));
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Toast.makeText(getContext(),
+                        "Error: " + status.getStatusMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        setupMap();
+
+        if (checkLocationPermission()) {
+            getCurrentLocation();
         }
     }
 
+    private void setupMap() {
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().setCompassEnabled(true);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+        if (checkLocationPermission()) {
+            googleMap.setMyLocationEnabled(true);
+        }
+    }
+
+    private boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(requireContext(),
+               Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            requestLocationPermission();
+            return false;
+        }
+    }
+
+    private void getCurrentLocation() {
+        try {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(requireActivity(), location -> {
+                        if (location != null) {
+                            LatLng currentLatLng = new LatLng(
+                                    location.getLatitude(),
+                                    location.getLongitude()
+                            );
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    currentLatLng, 14f));
+                            fetchNearbyPlaces(location.getLatitude(), location.getLongitude());
+                        }
+                    });
+        } catch (SecurityException e) {
+            Log.e("MapFragment", "Security Exception", e);
+        }
+    }
+
+    private void fetchNearbyPlaces(double lat, double lng) {
+        showLoading(true);
+
+        Call<List<Place>> call = apiService.getNearbyPlaces(lat, lng, 5000);
+        call.enqueue(new Callback<List<Place>>() {
+            @Override
+            public void onResponse(Call<List<Place>> call, Response<List<Place>> response) {
+                showLoading(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    displayPlacesOnMap(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Place>> call, Throwable t) {
+                showLoading(false);
+                Toast.makeText(getContext(), "Failed to load places", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void displayPlacesOnMap(List<Place> places) {
+        if (googleMap == null || places == null || places.isEmpty()) {
+            Toast.makeText(getContext(), "No places to display", Toast.LENGTH_SHORT).show();
+            return; // Exit if no places
+        }
+
+        googleMap.clear();
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+
+        for (Place place : places) {
+            LatLng latLng = new LatLng(place.getLat(), place.getLng());
+            googleMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(place.getName())
+                    .snippet(place.getAddress()));
+
+            boundsBuilder.include(latLng);
+        }
+
+        try {
+            // Only animate camera if there are valid points
+            LatLngBounds bounds = boundsBuilder.build();
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+        } catch (Exception e) {
+            Log.e("MapFragment", "Camera update error", e);
+            // Fallback: Zoom to first place if bounds fail
+            LatLng firstPlace = new LatLng(places.get(0).getLat(), places.get(0).getLng());
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(firstPlace, 12f));
+        }
+    }
+
+    private void showLoading(boolean isLoading) {
+        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+    }
+
+    private void requestLocationPermission() {
+        requestPermissions(
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                LOCATION_PERMISSION_REQUEST_CODE);
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_map, container, false);
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getCurrentLocation();
+            }
+        }
+    }
+
+    // MapView lifecycle methods
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
 }
