@@ -592,7 +592,7 @@ public class PackageDetailsFragment extends Fragment {
             @Override
             public void onFailure(Call<Package> call, Throwable t) {
                 // Handle network failure
-                Timber.i("Failed to update package: %s", t.getMessage());
+                Timber.e(t, "Failed to update package");
                 Toast.makeText(getContext(), "Network error. Please check your connection.", Toast.LENGTH_SHORT).show();
 
                 // Log the full stack trace for debugging
