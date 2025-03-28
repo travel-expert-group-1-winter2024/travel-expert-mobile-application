@@ -3,12 +3,16 @@ package com.example.travelexpertmobileapplication.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.travelexpertmobileapplication.R;
+import com.example.travelexpertmobileapplication.model.Product;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,6 +65,78 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        //Finding all the linearLayouts acting as buttons.
+        LinearLayout linearLayout_Packages = view.findViewById(R.id.linearLayout_Packages);
+        LinearLayout linearLayout_Customers = view.findViewById(R.id.linearyLayout_Customers);
+        LinearLayout linearLayout_Suppliers = view.findViewById(R.id.linearyLayout_Suppliers);
+        LinearLayout linearLayout_Products = view.findViewById(R.id.linearyLayout_Products);
+
+        //OnClick Handlers for each LinearLayout acting as a button.
+
+        /**
+         * LinearLayout acting as Packages "button"
+         * OnClick Event Listener to load the Packages Fragment
+         */
+        linearLayout_Packages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment packagesFragment = new PackagesFragment();
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, packagesFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+
+        /**
+         * LinearLayout acting as Customer "button"
+         * OnClick Event Listener to load the Customer Fragment
+         */
+        linearLayout_Customers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment customerFragment = new CustomerFragment();
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, customerFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+
+        /**
+         * LinearLayout acting as the Suppliers "button"
+         * OnClick Event Listener to load the Supplier Fragment
+         */
+        linearLayout_Suppliers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment supplierFragment = new SupplierFragment();
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, supplierFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+
+        /**
+         * LinearLayout acting as the Products "button"
+         * OnClick Event Listener to load the Products Fragment
+         */
+        linearLayout_Products.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment productFragment = new ProductFragment();
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, productFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+
+
+
+        return view;
     }
 }
