@@ -1,7 +1,6 @@
 package com.example.travelexpertmobileapplication.fragments;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.fragment.app.Fragment;
+
 import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.model.Product;
 import com.example.travelexpertmobileapplication.network.ApiClient;
-import com.example.travelexpertmobileapplication.utils.ApiEndpoints;
+import com.example.travelexpertmobileapplication.network.api.ProductAPIService;
+import com.example.travelexpertmobileapplication.network.api.SupplierContactAPIService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
@@ -50,13 +52,14 @@ public class ProductFragment extends Fragment {
     }
 
     private void fetchProducts() {
-        ApiEndpoints apiService = ApiClient.getClient().create(ApiEndpoints.class);
-
-        apiService.getProducts().enqueue(new Callback<JsonArray>() {
+        SupplierContactAPIService supplierContactAPIService = ApiClient.getClient().create(SupplierContactAPIService.class);
+        ProductAPIService productAPIService = ApiClient.getClient().create(ProductAPIService.class);
+        productAPIService.getProducts().enqueue(new Callback<JsonArray>() {
             @Override
             public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Product> products = new Gson().fromJson(response.body(), new TypeToken<List<Product>>() {}.getType());
+                    List<Product> products = new Gson().fromJson(response.body(), new TypeToken<List<Product>>() {
+                    }.getType());
                     productList.clear();
                     productList.addAll(products);
                     productNames.clear();

@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.model.SupplierContact;
 import com.example.travelexpertmobileapplication.network.ApiClient;
-import com.example.travelexpertmobileapplication.utils.ApiEndpoints;
+import com.example.travelexpertmobileapplication.network.api.SupplierContactAPIService;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,17 +28,18 @@ public class SupplierDetailsFragment extends Fragment {
             etEmail, etWebsite, etAffiliationId, etSupplierId;
     private Button btnEdit, btnSave;
     private boolean isEditable = false;
-    private ApiEndpoints api;
+    private SupplierContactAPIService api;
     private int supplierContactId;
 
-    public SupplierDetailsFragment() {}
+    public SupplierDetailsFragment() {
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_supplier_details, container, false);
-        api = ApiClient.getClient().create(ApiEndpoints.class);
+        api = ApiClient.getClient().create(SupplierContactAPIService.class);
 
         // 🔹 Initialize Views
         etSupplierContactId = view.findViewById(R.id.etSupplierContactId);

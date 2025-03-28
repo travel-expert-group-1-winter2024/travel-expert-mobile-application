@@ -7,4 +7,7 @@ public class RestUriBuilder {
     public static String agencyUri(long agencyId) {
         return BASE_URL + "agencies/" + agencyId;
     }
+    public static String userUri(String userId) {
+        return BASE_URL + "users/" + userId;
+    }
 }
