@@ -10,8 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.models.Product;
-import com.example.travelexpertmobileapplication.utils.ApiClient;
+import com.example.travelexpertmobileapplication.model.Product;
+import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.utils.ApiEndpoints;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

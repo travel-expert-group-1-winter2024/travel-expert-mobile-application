@@ -15,8 +15,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.models.SupplierContact;
-import com.example.travelexpertmobileapplication.utils.ApiClient;
+import com.example.travelexpertmobileapplication.model.SupplierContact;
+import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.utils.ApiEndpoints;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

@@ -13,8 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.models.SupplierContact;
-import com.example.travelexpertmobileapplication.utils.ApiClient;
+import com.example.travelexpertmobileapplication.model.SupplierContact;
+import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.utils.ApiEndpoints;
 
 import retrofit2.Call;
