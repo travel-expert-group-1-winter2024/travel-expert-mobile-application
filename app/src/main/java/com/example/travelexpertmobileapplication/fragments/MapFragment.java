@@ -59,15 +59,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize API service using your existing pattern
-        apiService = ApiClient.getClient().create(PlacesAPIService.class);
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+        try {
+            apiService = ApiClient.getClient().create(PlacesAPIService.class);
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
-        // Initialize Places SDK for autocomplete
-        if (!Places.isInitialized()) {
-            Places.initialize(requireContext(), getString(R.string.google_maps_key));
+            if (!Places.isInitialized()) {
+                Places.initialize(requireContext(), getString(R.string.google_maps_key));
+            }
+            placesClient = Places.createClient(requireContext());
+        } catch (Exception e) {
+            Log.e("MapFragment", "Initialization error", e);
+            Toast.makeText(getContext(), "Map services initialization failed", Toast.LENGTH_LONG).show();
         }
-        placesClient = Places.createClient(requireContext());
     }
 
     @Nullable
@@ -90,65 +93,132 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return view;
     }
 
+//    private void setupAutocompleteSearch(View rootView) {
+//
+//        FrameLayout container = rootView.findViewById(R.id.searchContainer);
+//        // Create AutocompleteSupportFragment
+//        AutocompleteSupportFragment autocompleteFragment = new AutocompleteSupportFragment();
+//
+//        getChildFragmentManager().beginTransaction()
+//                .replace(container.getId(), autocompleteFragment)
+//                .commit();
+//
+//        // Configure the autocomplete fragment
+//        autocompleteFragment.setPlaceFields(Arrays.asList(
+//                com.google.android.libraries.places.api.model.Place.Field.ID,
+//                com.google.android.libraries.places.api.model.Place.Field.NAME,
+//                com.google.android.libraries.places.api.model.Place.Field.LAT_LNG,
+//                com.google.android.libraries.places.api.model.Place.Field.ADDRESS
+//        ));
+//
+//        // Set up the place selection listener
+//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//            @Override
+//            public void onPlaceSelected(@NonNull com.google.android.libraries.places.api.model.Place place) {
+//                if (place.getLatLng() != null && googleMap != null) {
+//                    // Move camera to selected place
+//                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+//                            place.getLatLng(), 14f));
+//
+//                    // Add marker
+//                    googleMap.clear();
+//                    googleMap.addMarker(new MarkerOptions()
+//                            .position(place.getLatLng())
+//                            .title(place.getName())
+//                            .snippet(place.getAddress()));
+//                }
+//            }
+//
+//            @Override
+//            public void onError(@NonNull Status status) {
+//                Toast.makeText(getContext(),
+//                        "Error: " + status.getStatusMessage(),
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+
     private void setupAutocompleteSearch(View rootView) {
-
         FrameLayout container = rootView.findViewById(R.id.searchContainer);
-        // Create AutocompleteSupportFragment
-        AutocompleteSupportFragment autocompleteFragment = new AutocompleteSupportFragment();
+        if (container == null) {
+            Log.e("MapFragment", "Search container not found");
+            return;
+        }
 
-        getChildFragmentManager().beginTransaction()
-                .replace(container.getId(), autocompleteFragment)
-                .commit();
+        try {
+            AutocompleteSupportFragment autocompleteFragment = new AutocompleteSupportFragment();
 
-        // Configure the autocomplete fragment
-        autocompleteFragment.setPlaceFields(Arrays.asList(
-                com.google.android.libraries.places.api.model.Place.Field.ID,
-                com.google.android.libraries.places.api.model.Place.Field.NAME,
-                com.google.android.libraries.places.api.model.Place.Field.LAT_LNG,
-                com.google.android.libraries.places.api.model.Place.Field.ADDRESS
-        ));
+            getChildFragmentManager().beginTransaction()
+                    .replace(container.getId(), autocompleteFragment)
+                    .commit();
 
-        // Set up the place selection listener
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(@NonNull com.google.android.libraries.places.api.model.Place place) {
-                if (place.getLatLng() != null && googleMap != null) {
-                    // Move camera to selected place
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                            place.getLatLng(), 14f));
+            // Set place fields
+            autocompleteFragment.setPlaceFields(Arrays.asList(
+                    com.google.android.libraries.places.api.model.Place.Field.ID,
+                    com.google.android.libraries.places.api.model.Place.Field.NAME,
+                    com.google.android.libraries.places.api.model.Place.Field.LAT_LNG,
+                    com.google.android.libraries.places.api.model.Place.Field.ADDRESS
+            ));
 
-                    // Add marker
-                    googleMap.clear();
-                    googleMap.addMarker(new MarkerOptions()
-                            .position(place.getLatLng())
-                            .title(place.getName())
-                            .snippet(place.getAddress()));
+            // Set up the place selection listener
+            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(@NonNull com.google.android.libraries.places.api.model.Place place) {
+                    if (place.getLatLng() != null && googleMap != null) {
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                place.getLatLng(), 14f));
+
+                        googleMap.clear();
+                        googleMap.addMarker(new MarkerOptions()
+                                .position(place.getLatLng())
+                                .title(place.getName())
+                                .snippet(place.getAddress()));
+                    }
                 }
-            }
 
-            @Override
-            public void onError(@NonNull Status status) {
-                Toast.makeText(getContext(),
-                        "Error: " + status.getStatusMessage(),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onError(@NonNull Status status) {
+                    if (status.getStatusMessage() != null) {
+                        Toast.makeText(getContext(),
+                                "Error: " + status.getStatusMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e("MapFragment", "Error setting up autocomplete", e);
+            Toast.makeText(getContext(), "Search functionality not available", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        setupMap();
+        try {
+            // Enable basic map features
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            googleMap.getUiSettings().setZoomControlsEnabled(true);
+            googleMap.getUiSettings().setCompassEnabled(true);
 
-        if (checkLocationPermission()) {
-            getCurrentLocation();
+            // Check and request location permission
+            if (checkLocationPermission()) {
+                googleMap.setMyLocationEnabled(true);
+                getCurrentLocation();
+            }
+
+            // Set a default location if needed
+            LatLng defaultLocation = new LatLng(37.4220936, -122.083922); // Googleplex
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f));
+
+        } catch (SecurityException e) {
+            Log.e("MapFragment", "Error setting up map", e);
         }
     }
 
     private void setupMap() {
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.getUiSettings().setCompassEnabled(true);
-        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         if (checkLocationPermission()) {
             googleMap.setMyLocationEnabled(true);
