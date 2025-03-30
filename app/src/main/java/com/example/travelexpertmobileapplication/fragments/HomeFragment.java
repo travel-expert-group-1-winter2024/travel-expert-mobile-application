@@ -2,6 +2,8 @@ package com.example.travelexpertmobileapplication.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -12,8 +14,12 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.travelexpertmobileapplication.R;
+import com.example.travelexpertmobileapplication.dto.agent.CreateAgentRequestDTO;
+import com.example.travelexpertmobileapplication.dto.user.LoginRequestDTO;
+import com.example.travelexpertmobileapplication.model.Agent;
 import com.example.travelexpertmobileapplication.model.Product;
 
 /**
@@ -31,6 +37,8 @@ public class HomeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+
 
     public HomeFragment() {
         // Required empty public constructor
@@ -69,11 +77,20 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        //Finding all the linearLayouts acting as buttons.
+
+
+        //Finding all Elements needed
+        //LinearLayouts
         LinearLayout linearLayout_Packages = view.findViewById(R.id.linearLayout_Packages);
         LinearLayout linearLayout_Customers = view.findViewById(R.id.linearyLayout_Customers);
         LinearLayout linearLayout_Suppliers = view.findViewById(R.id.linearyLayout_Suppliers);
         LinearLayout linearLayout_Products = view.findViewById(R.id.linearyLayout_Products);
+
+
+
+        //System.out.println(loginRequestDTO.getUsername());
+
+
 
         //OnClick Handlers for each LinearLayout acting as a button.
 
@@ -231,4 +248,26 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
+
+    /**
+     * WIP, Dynamically load Agents First name.
+     */
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        TextView agentGreeting = view.findViewById(R.id.agentGreeting);
+//        String agentName = "";
+//        Bundle args = getArguments();
+//        if(args != null){
+//            agentName = args.getString("FirstName", "");
+//        }
+//
+//
+//
+//        //TextView
+//
+//        agentGreeting.setText("Hello, " + agentName + "!");
+//
+//
+//    }
 }
