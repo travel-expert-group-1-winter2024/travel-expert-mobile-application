@@ -9,6 +9,7 @@ import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
 import com.example.travelexpertmobileapplication.fragments.HomeFragment;
+import com.example.travelexpertmobileapplication.fragments.MapFragment;
 import com.example.travelexpertmobileapplication.fragments.PackagesFragment;
 import com.example.travelexpertmobileapplication.fragments.ProfileFragment;
 import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
