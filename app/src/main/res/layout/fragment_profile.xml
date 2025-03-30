@@ -25,7 +25,7 @@
                     android:id="@+id/imageView"
                     android:layout_width="187dp"
                     android:layout_height="145dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -35,67 +35,169 @@
                     android:id="@+id/agentGreeting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="12dp"
                     android:text="Hello ${Agent Name}"
                     android:textColor="#fffffe"
                     android:textSize="30dp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="@+id/imageView"
-                    app:layout_constraintHorizontal_bias="0.496"
+                    app:layout_constraintHorizontal_bias="0.458"
                     app:layout_constraintStart_toStartOf="@+id/imageView"
                     app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-                <TextView
-                    android:id="@+id/textView19"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="21dp"
-                    android:text="Are you ready to conquer the day?"
-                    android:textColor="#fffffe"
-                    android:textSize="16dp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/agentGreeting"
-                    app:layout_constraintStart_toStartOf="@+id/agentGreeting"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/outlined_button"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="264dp"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="10dp"
+                    android:backgroundTint="@color/travelExpertsTeal"
+                    android:foreground="@drawable/ripple_effect"
+                    android:text="Edit Profile"
+                    android:textColor="@color/white"
+                    app:cornerRadius="15dp"
+                    app:icon="@drawable/pencil"
+                    app:iconGravity="textStart"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.496"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/agentGreeting" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="30dp"
                     android:layout_marginEnd="30dp"
-                    android:hint="Name"
-                    >
+                    android:hint="First Name">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textFieldFirstName"
                         android:layout_width="match_parent"
+
                         android:layout_height="wrap_content"
-
-                        />
-
+                        android:editable="false"
+                        android:text="Agent First Name" />
 
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-<!--                <LinearLayout-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_margin="25dp"-->
-<!--                    android:orientation="horizontal" />-->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:hint="Middle Initial">
 
-<!--                <LinearLayout-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_margin="25dp"-->
-<!--                    android:orientation="horizontal"/>-->
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textFieldMiddleInitial"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="wrap_content"
+                        android:editable="false"
+                        android:text="Agent Middle Initial" />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:hint="Last Name">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textFieldLastName"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="wrap_content"
+                        android:editable="false"
+                        android:text="Agent Last Name" />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:hint="Business Phone Number">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textFieldBusPhoneNumber"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="wrap_content"
+                        android:editable="false"
+                        android:text="403 111 1234" />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:hint="Email">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textFieldEmail"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="wrap_content"
+                        android:editable="false"
+                        android:text="example@email.com" />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:hint="Position">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textFieldPosition"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="wrap_content"
+                        android:editable="false"
+                        android:text="Awesome Saucer" />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--                <LinearLayout-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="match_parent"-->
+                <!--                    android:layout_gravity="center"-->
+                <!--                    android:layout_margin="25dp"-->
+                <!--                    android:orientation="horizontal" />-->
+
+                <!--                <LinearLayout-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="match_parent"-->
+                <!--                    android:layout_gravity="center"-->
+                <!--                    android:layout_margin="25dp"-->
+                <!--                    android:orientation="horizontal"/>-->
             </LinearLayout>
 
         </LinearLayout>
