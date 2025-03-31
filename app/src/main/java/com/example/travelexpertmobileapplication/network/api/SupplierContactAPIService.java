@@ -12,10 +12,10 @@ import retrofit2.http.Path;
 
 public interface SupplierContactAPIService {
 
-    @GET("/suppliercontacts")
+    @GET("/api/suppliercontacts")
     Call<JsonArray> getSupplierContacts();
 
-    @PUT("/suppliercontacts/{id}")
+    @PUT("/api/suppliercontacts/{id}")
     Call<SupplierContact> updateSupplierContact(@Path("id") int id, @Body SupplierContact updatedContact);
 
 }

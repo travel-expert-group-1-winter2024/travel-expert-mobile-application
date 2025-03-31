@@ -9,7 +9,6 @@ import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
 import com.example.travelexpertmobileapplication.fragments.HomeFragment;
-import com.example.travelexpertmobileapplication.fragments.MapFragment;
 import com.example.travelexpertmobileapplication.fragments.PackagesFragment;
 import com.example.travelexpertmobileapplication.fragments.ProfileFragment;
 import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
@@ -17,6 +16,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import timber.log.Timber;
+import com.example.travelexpertmobileapplication.fragments.MapFragment;
+
 
 public class MainActivity extends AppCompatActivity {
 
