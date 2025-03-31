@@ -227,7 +227,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(),
-               Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
             requestLocationPermission();

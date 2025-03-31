@@ -1,7 +1,13 @@
 package com.example.travelexpertmobileapplication.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Product {
+
+    @SerializedName("productid")
     private int productId;
+
+    @SerializedName("prodname")
     private String prodname;
 
     // Getter
