@@ -5,10 +5,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.model.Product;
@@ -33,9 +35,7 @@ public class ProductFragment extends Fragment {
     List<Product> productList = new ArrayList<>();
     List<String> productNames = new ArrayList<>();
 
-    public ProductFragment() {
-        // Required empty public constructor
-    }
+    public ProductFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,6 +45,14 @@ public class ProductFragment extends Fragment {
         lvProducts = view.findViewById(R.id.lvProducts);
         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, productNames);
         lvProducts.setAdapter(adapter);
+
+        lvProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Product selectedProduct = productList.get(position);
+                showProductDetails(selectedProduct);
+            }
+        });
 
         fetchProducts();
 
@@ -58,8 +66,7 @@ public class ProductFragment extends Fragment {
             @Override
             public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Product> products = new Gson().fromJson(response.body(), new TypeToken<List<Product>>() {
-                    }.getType());
+                    List<Product> products = new Gson().fromJson(response.body(), new TypeToken<List<Product>>() {}.getType());
                     productList.clear();
                     productList.addAll(products);
                     productNames.clear();
@@ -79,5 +86,19 @@ public class ProductFragment extends Fragment {
                 Log.e("API Error", "Failed to fetch products: " + t.getMessage());
             }
         });
+    }
+
+    private void showProductDetails(Product product) {
+        ProductDetailsFragment detailsFragment = new ProductDetailsFragment();
+
+        Bundle args = new Bundle();
+        args.putInt("productId", product.getProductId());
+        args.putString("productName", product.getProdname());
+        detailsFragment.setArguments(args);
+
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, detailsFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }
