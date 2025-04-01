@@ -20,4 +20,5 @@ public interface AgentAPIService {
             @Path("id") int agentId,
             @Part MultipartBody.Part image
     );
+
 }
