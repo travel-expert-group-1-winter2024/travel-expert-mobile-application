@@ -93,51 +93,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return view;
     }
 
-//    private void setupAutocompleteSearch(View rootView) {
-//
-//        FrameLayout container = rootView.findViewById(R.id.searchContainer);
-//        // Create AutocompleteSupportFragment
-//        AutocompleteSupportFragment autocompleteFragment = new AutocompleteSupportFragment();
-//
-//        getChildFragmentManager().beginTransaction()
-//                .replace(container.getId(), autocompleteFragment)
-//                .commit();
-//
-//        // Configure the autocomplete fragment
-//        autocompleteFragment.setPlaceFields(Arrays.asList(
-//                com.google.android.libraries.places.api.model.Place.Field.ID,
-//                com.google.android.libraries.places.api.model.Place.Field.NAME,
-//                com.google.android.libraries.places.api.model.Place.Field.LAT_LNG,
-//                com.google.android.libraries.places.api.model.Place.Field.ADDRESS
-//        ));
-//
-//        // Set up the place selection listener
-//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(@NonNull com.google.android.libraries.places.api.model.Place place) {
-//                if (place.getLatLng() != null && googleMap != null) {
-//                    // Move camera to selected place
-//                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-//                            place.getLatLng(), 14f));
-//
-//                    // Add marker
-//                    googleMap.clear();
-//                    googleMap.addMarker(new MarkerOptions()
-//                            .position(place.getLatLng())
-//                            .title(place.getName())
-//                            .snippet(place.getAddress()));
-//                }
-//            }
-//
-//            @Override
-//            public void onError(@NonNull Status status) {
-//                Toast.makeText(getContext(),
-//                        "Error: " + status.getStatusMessage(),
-//                        Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-
     private void setupAutocompleteSearch(View rootView) {
         FrameLayout container = rootView.findViewById(R.id.searchContainer);
         if (container == null) {
@@ -208,8 +163,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
 
             // Set a default location if needed
-            LatLng defaultLocation = new LatLng(37.4220936, -122.083922); // Googleplex
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f));
+            LatLng saitLocation = new LatLng(51.0649, -114.0881); // SAIT main campus coordinates
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(saitLocation, 15f));
 
         } catch (SecurityException e) {
             Log.e("MapFragment", "Error setting up map", e);
