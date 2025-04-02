@@ -48,7 +48,7 @@
                     tools:layout_editor_absoluteY="157dp" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/outlined_button"
+                    android:id="@+id/btnEditProfile"
                     style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="264dp"
                     android:layout_height="56dp"

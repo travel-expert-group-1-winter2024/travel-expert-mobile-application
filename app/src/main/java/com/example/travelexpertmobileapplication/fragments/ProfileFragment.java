@@ -2,13 +2,29 @@ package com.example.travelexpertmobileapplication.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.travelexpertmobileapplication.R;
+import com.example.travelexpertmobileapplication.model.Agent;
+import com.example.travelexpertmobileapplication.network.ApiClient;
+import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
+import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
+import com.google.android.material.button.MaterialButton;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,6 +77,79 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        //Finding all necessary elements by ID
+
+        MaterialButton btnEditProfile = view.findViewById(R.id.btnEditProfile);
+
+
+       //Edit Profile OnClick handler
+
+        btnEditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment editProfileFragment = new EditProfileFragement();
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, editProfileFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+
+        return view;
+
+
     }
-}
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // With the fragment inflated, grabbing TextView id's.
+        TextView textViewFirstName = view.findViewById(R.id.textFieldFirstName);
+        TextView textViewMiddleInitial = view.findViewById(R.id.textFieldMiddleInitial);
+        TextView textViewLastName = view.findViewById(R.id.textFieldLastName);
+        TextView textViewPhoneNumber = view.findViewById(R.id.textFieldBusPhoneNumber);
+        TextView textViewEmail = view.findViewById(R.id.textFieldEmail);
+        TextView textViewPosition = view.findViewById(R.id.textFieldPosition);
+
+        // Handling JWT errors.
+        String token = SharedPrefUtil.getToken(requireContext());
+        if (token == null){
+            Toast.makeText(requireContext(), "Authentication token missing", Toast.LENGTH_SHORT).show();
+        }
+
+        AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
+        Call<Agent> call = agentAPIService.getMyAgentInfo("Bearer" + token);
+
+        call.enqueue(new Callback<Agent>() {
+
+
+            @Override
+            public void onResponse(Call<Agent> call, Response<Agent> response) {
+                if (response.isSuccessful() && response.body() != null ) {
+                    Agent agent = response.body();
+
+                    textViewFirstName.setText(agent.getAgtFirstName());
+                    textViewMiddleInitial.setText(agent.getAgtMiddleInitial());
+                    textViewLastName.setText(agent.getAgtLastName());
+                    textViewPhoneNumber.setText(agent.getAgtBusPhone());
+                    textViewEmail.setText(agent.getAgtEmail());
+                    textViewPosition.setText(agent.getAgtPosition());
+                } else {
+                    Toast.makeText(requireContext(), "Failed to fetch Agent Information!", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+            @Override
+            public void onFailure(Call<Agent> call, Throwable t) {
+                Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+
+    }
+}//class
