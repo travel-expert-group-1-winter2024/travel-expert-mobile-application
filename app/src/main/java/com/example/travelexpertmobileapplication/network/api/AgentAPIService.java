@@ -1,7 +1,8 @@
 package com.example.travelexpertmobileapplication.network.api;
 
 import com.example.travelexpertmobileapplication.dto.agent.CreateAgentRequestDTO;
-import com.example.travelexpertmobileapplication.model.Agent;
+import com.example.travelexpertmobileapplication.dto.agent.GetAgentInfoDTO;
+import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -24,8 +25,8 @@ public interface AgentAPIService {
             @Part MultipartBody.Part image
     );
 
-    @GET("/api/agents/me")
-    Call<Agent> getMyAgentInfo(@Header("Authorization") String token);
+    @GET("/agents/me")
+    Call<GenericApiResponse<GetAgentInfoDTO>> getMyAgentInfo(@Header("Authorization") String token);
 
 
 

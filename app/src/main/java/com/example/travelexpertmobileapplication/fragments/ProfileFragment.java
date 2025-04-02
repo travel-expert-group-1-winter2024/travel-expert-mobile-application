@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.travelexpertmobileapplication.R;
+import com.example.travelexpertmobileapplication.dto.agent.GetAgentInfoDTO;
+import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.model.Agent;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
@@ -120,35 +122,38 @@ public class ProfileFragment extends Fragment {
         String token = SharedPrefUtil.getToken(requireContext());
         if (token == null){
             Toast.makeText(requireContext(), "Authentication token missing", Toast.LENGTH_SHORT).show();
+        } else {
+            Timber.tag("Token Debug").d("Token being sent: Bearer %s", token);
         }
 
         AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
-        Call<Agent> call = agentAPIService.getMyAgentInfo("Bearer " + token);
+        Call<GenericApiResponse<GetAgentInfoDTO>> call = agentAPIService.getMyAgentInfo("Bearer " + token);
 
-        call.enqueue(new Callback<Agent>() {
+        call.enqueue(new Callback<GenericApiResponse<GetAgentInfoDTO>>() {
 
 
             @Override
-            public void onResponse(Call<Agent> call, Response<Agent> response) {
+            public void onResponse(Call<GenericApiResponse<GetAgentInfoDTO>> call, Response<GenericApiResponse<GetAgentInfoDTO>> response) {
                 if (response.isSuccessful() && response.body() != null ) {
-                    Agent agent = response.body();
+                    GetAgentInfoDTO agentInfo = response.body().getData();
                     Timber.tag("onResponse Call").d(String.valueOf(response));
                     
 
-                    textViewFirstName.setText(agent.getAgtFirstName());
-                    textViewMiddleInitial.setText(agent.getAgtMiddleInitial());
-                    textViewLastName.setText(agent.getAgtLastName());
-                    textViewPhoneNumber.setText(agent.getAgtBusPhone());
-                    textViewEmail.setText(agent.getAgtEmail());
-                    textViewPosition.setText(agent.getAgtPosition());
+                    textViewFirstName.setText(agentInfo.getAgtFirstName());
+                    textViewMiddleInitial.setText(agentInfo.getAgtMiddleInitial());
+                    textViewLastName.setText(agentInfo.getAgtLastName());
+                    textViewPhoneNumber.setText(agentInfo.getAgtBusPhone());
+                    textViewEmail.setText(agentInfo.getAgtEmail());
+                    textViewPosition.setText(agentInfo.getAgtPosition());
                 } else {
                     Timber.tag("FAILED TO FETCH").d(String.valueOf("Failed to fetch Agent Information! " + response));
                     Toast.makeText(requireContext(), "Failed to fetch Agent Information!", Toast.LENGTH_SHORT).show();
                 }
 
             }
+
             @Override
-            public void onFailure(Call<Agent> call, Throwable t) {
+            public void onFailure(Call<GenericApiResponse<GetAgentInfoDTO>> call, Throwable t) {
                 Timber.tag("onFailure:").e("Api call failed: %s", t.getMessage());
                 Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
