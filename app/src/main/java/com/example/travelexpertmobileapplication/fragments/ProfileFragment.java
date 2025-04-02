@@ -8,12 +8,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -121,7 +123,7 @@ public class ProfileFragment extends Fragment {
         }
 
         AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
-        Call<Agent> call = agentAPIService.getMyAgentInfo("Bearer" + token);
+        Call<Agent> call = agentAPIService.getMyAgentInfo("Bearer " + token);
 
         call.enqueue(new Callback<Agent>() {
 
@@ -130,6 +132,8 @@ public class ProfileFragment extends Fragment {
             public void onResponse(Call<Agent> call, Response<Agent> response) {
                 if (response.isSuccessful() && response.body() != null ) {
                     Agent agent = response.body();
+                    Timber.tag("onResponse Call").d(String.valueOf(response));
+                    
 
                     textViewFirstName.setText(agent.getAgtFirstName());
                     textViewMiddleInitial.setText(agent.getAgtMiddleInitial());
@@ -138,12 +142,14 @@ public class ProfileFragment extends Fragment {
                     textViewEmail.setText(agent.getAgtEmail());
                     textViewPosition.setText(agent.getAgtPosition());
                 } else {
+                    Timber.tag("FAILED TO FETCH").d(String.valueOf("Failed to fetch Agent Information! " + response));
                     Toast.makeText(requireContext(), "Failed to fetch Agent Information!", Toast.LENGTH_SHORT).show();
                 }
 
             }
             @Override
             public void onFailure(Call<Agent> call, Throwable t) {
+                Timber.tag("onFailure:").e("Api call failed: %s", t.getMessage());
                 Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
