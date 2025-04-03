@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -17,7 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.dto.agent.AgentInfoDTO;
+import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
+import com.example.travelexpertmobileapplication.dto.agent.AgentUpdateDetailRequestDTO;
 import com.example.travelexpertmobileapplication.dto.generic.ErrorInfo;
 import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.network.ApiClient;
@@ -28,7 +28,6 @@ import com.google.android.material.button.MaterialButton;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -256,13 +255,14 @@ public class EditProfileFragment extends Fragment {
         String updatedEmail = textFieldEmail.getText().toString();
         String updatedPosition = textFieldPosition.getText().toString();
 
-        AgentInfoDTO updatedAgentInfo = new AgentInfoDTO();
-        updatedAgentInfo.setAgtFirstName(updatedFirstName);
-        updatedAgentInfo.setAgtMiddleInitial(updatedMiddleInitial);
-        updatedAgentInfo.setAgtLastName(updatedLastName);
-        updatedAgentInfo.setAgtBusPhone(updatedBusPhone);
-        updatedAgentInfo.setAgtEmail(updatedEmail);
-        updatedAgentInfo.setAgtPosition(updatedPosition);
+        AgentUpdateDetailRequestDTO updatedAgentInfo = new AgentUpdateDetailRequestDTO(
+                updatedFirstName,
+                updatedMiddleInitial,
+                updatedLastName,
+                updatedBusPhone,
+                updatedEmail,
+                updatedPosition
+        );
 
         //Grabbing Token
         String token = SharedPrefUtil.getToken(requireContext());
@@ -273,11 +273,11 @@ public class EditProfileFragment extends Fragment {
 
 
         AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
-        Call<GenericApiResponse<AgentInfoDTO>> call = agentAPIService.updateAgentInfo("Bearer " + token,id, updatedAgentInfo);
+        Call<GenericApiResponse<AgentDetailsResponseDTO>> call = agentAPIService.updateAgentInfo("Bearer " + token,id, updatedAgentInfo);
 
-        call.enqueue(new Callback<GenericApiResponse<AgentInfoDTO>>() {
+        call.enqueue(new Callback<GenericApiResponse<AgentDetailsResponseDTO>>() {
             @Override
-            public void onResponse(Call<GenericApiResponse<AgentInfoDTO>> call, Response<GenericApiResponse<AgentInfoDTO>> response) {
+            public void onResponse(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Response<GenericApiResponse<AgentDetailsResponseDTO>> response) {
                 if (response.isSuccessful()){
                     //Toasting to notify user that their changes were saved successfully
                     Toast.makeText(getContext(), "Awesome! Profile Saved Successfully", Toast.LENGTH_LONG).show();
@@ -296,7 +296,7 @@ public class EditProfileFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<GenericApiResponse<AgentInfoDTO>> call, Throwable t) {
+            public void onFailure(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Throwable t) {
                 Timber.e("Network Failure");
                 Toast.makeText(getContext(), "Network failure, try again later", Toast.LENGTH_SHORT).show();
             }

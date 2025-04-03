@@ -1,7 +1,8 @@
 package com.example.travelexpertmobileapplication.network.api;
 
+import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
+import com.example.travelexpertmobileapplication.dto.agent.AgentUpdateDetailRequestDTO;
 import com.example.travelexpertmobileapplication.dto.agent.CreateAgentRequestDTO;
-import com.example.travelexpertmobileapplication.dto.agent.AgentInfoDTO;
 import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 
 import okhttp3.MultipartBody;
@@ -19,6 +20,7 @@ import retrofit2.http.Path;
 public interface AgentAPIService {
     @POST("/agents")
     Call<Void> createAgent(@Body CreateAgentRequestDTO agent);
+
     @Multipart
     @POST("/agents/{id}/upload")
     Call<ResponseBody> uploadAgentPhoto(
@@ -27,16 +29,11 @@ public interface AgentAPIService {
     );
 
     @GET("/agents/me")
-    Call<GenericApiResponse<AgentInfoDTO>> getMyAgentInfo(@Header("Authorization") String token);
+    Call<GenericApiResponse<AgentDetailsResponseDTO>> getMyAgentInfo(@Header("Authorization") String token);
 
     @PUT("/agents/{id}")
-    Call<GenericApiResponse<AgentInfoDTO>> updateAgentInfo(
+    Call<GenericApiResponse<AgentDetailsResponseDTO>> updateAgentInfo(
             @Header("Authorization") String token,
             @Path("id") long id,
-            @Body AgentInfoDTO agentInfo);
-
-
-
-
-
-} //class
+            @Body AgentUpdateDetailRequestDTO agentInfo);
+}

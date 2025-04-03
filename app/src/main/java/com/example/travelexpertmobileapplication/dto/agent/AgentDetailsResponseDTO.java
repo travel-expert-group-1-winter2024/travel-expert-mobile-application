@@ -1,6 +1,6 @@
 package com.example.travelexpertmobileapplication.dto.agent;
 
-public class AgentInfoDTO {
+public class AgentDetailsResponseDTO {
     private Long id;
     private String agtFirstName;
     private String agtMiddleInitial;
@@ -9,6 +9,9 @@ public class AgentInfoDTO {
     private String agtEmail;
     private String agtPosition;
     private Long agencyId;
+
+    public AgentDetailsResponseDTO() {
+    }
 
     public Long getId() {
         return id;

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
@@ -18,12 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.dto.agent.AgentInfoDTO;
-import com.example.travelexpertmobileapplication.dto.agent.CreateAgentRequestDTO;
+import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
 import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
-import com.example.travelexpertmobileapplication.dto.user.LoginRequestDTO;
-import com.example.travelexpertmobileapplication.model.Agent;
-import com.example.travelexpertmobileapplication.model.Product;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
 import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
@@ -270,15 +265,15 @@ public class HomeFragment extends Fragment {
         }
 
         AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
-        Call<GenericApiResponse<AgentInfoDTO>> call = agentAPIService.getMyAgentInfo("Bearer " + token);
+        Call<GenericApiResponse<AgentDetailsResponseDTO>> call = agentAPIService.getMyAgentInfo("Bearer " + token);
 
-        call.enqueue(new Callback<GenericApiResponse<AgentInfoDTO>>() {
+        call.enqueue(new Callback<GenericApiResponse<AgentDetailsResponseDTO>>() {
 
 
             @Override
-            public void onResponse(Call<GenericApiResponse<AgentInfoDTO>> call, Response<GenericApiResponse<AgentInfoDTO>> response) {
+            public void onResponse(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Response<GenericApiResponse<AgentDetailsResponseDTO>> response) {
                 if (response.isSuccessful() && response.body() != null ) {
-                    AgentInfoDTO agentInfo = response.body().getData();
+                    AgentDetailsResponseDTO agentInfo = response.body().getData();
                     Timber.tag("onResponse Call").d(String.valueOf(response));
 
                     //Setting the agent info into the waiting and available TextViews.
@@ -291,7 +286,7 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<GenericApiResponse<AgentInfoDTO>> call, Throwable t) {
+            public void onFailure(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Throwable t) {
                 Timber.tag("onFailure:").e("Api call failed: %s", t.getMessage());
                 Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
