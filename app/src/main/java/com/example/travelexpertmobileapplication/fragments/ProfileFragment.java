@@ -44,6 +44,8 @@ public class ProfileFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -130,6 +132,7 @@ public class ProfileFragment extends Fragment {
                     Timber.tag("onResponse Call").d(String.valueOf(response));
 
                     //Bundling up the Agent info to pass to EditProfileFragment
+                    bundle.putLong("id", agentInfo.getId());
                     bundle.putString("firstName", agentInfo.getAgtFirstName());
                     bundle.putString("middleInitial", agentInfo.getAgtMiddleInitial());
                     bundle.putString("lastName", agentInfo.getAgtLastName());

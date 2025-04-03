@@ -15,12 +15,23 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.travelexpertmobileapplication.R;
+import com.example.travelexpertmobileapplication.dto.agent.AgentInfoDTO;
 import com.example.travelexpertmobileapplication.dto.agent.CreateAgentRequestDTO;
+import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.dto.user.LoginRequestDTO;
 import com.example.travelexpertmobileapplication.model.Agent;
 import com.example.travelexpertmobileapplication.model.Product;
+import com.example.travelexpertmobileapplication.network.ApiClient;
+import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
+import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +39,8 @@ import com.example.travelexpertmobileapplication.model.Product;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
+
+    private TextView agentGreeting;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -85,6 +98,8 @@ public class HomeFragment extends Fragment {
         LinearLayout linearLayout_Customers = view.findViewById(R.id.linearyLayout_Customers);
         LinearLayout linearLayout_Suppliers = view.findViewById(R.id.linearyLayout_Suppliers);
         LinearLayout linearLayout_Products = view.findViewById(R.id.linearyLayout_Products);
+
+        agentGreeting = view.findViewById(R.id.agentGreeting);
 
 
         /**
@@ -242,25 +257,49 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    /**
-     * WIP, Dynamically load Agents First name.
-     */
-//    @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        TextView agentGreeting = view.findViewById(R.id.agentGreeting);
-//        String agentName = "";
-//        Bundle args = getArguments();
-//        if(args != null){
-//            agentName = args.getString("FirstName", "");
-//        }
-//
-//
-//
-//        //TextView
-//
-//        agentGreeting.setText("Hello, " + agentName + "!");
-//
-//
-//    }
-}
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Handling JWT errors.
+        String token = SharedPrefUtil.getToken(requireContext());
+        if (token == null){
+            Toast.makeText(requireContext(), "Authentication token missing", Toast.LENGTH_SHORT).show();
+        } else {
+            Timber.tag("Token Debug").d("Token being sent: Bearer %s", token);
+        }
+
+        AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
+        Call<GenericApiResponse<AgentInfoDTO>> call = agentAPIService.getMyAgentInfo("Bearer " + token);
+
+        call.enqueue(new Callback<GenericApiResponse<AgentInfoDTO>>() {
+
+
+            @Override
+            public void onResponse(Call<GenericApiResponse<AgentInfoDTO>> call, Response<GenericApiResponse<AgentInfoDTO>> response) {
+                if (response.isSuccessful() && response.body() != null ) {
+                    AgentInfoDTO agentInfo = response.body().getData();
+                    Timber.tag("onResponse Call").d(String.valueOf(response));
+
+                    //Setting the agent info into the waiting and available TextViews.
+                    agentGreeting.setText(String.format("Welcome back %s", agentInfo.getAgtFirstName()));
+
+                } else {
+                    Timber.tag("FAILED TO FETCH").d(String.valueOf("Failed to fetch Agent Information! " + response));
+                    Toast.makeText(requireContext(), "Failed to fetch Agent Information!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GenericApiResponse<AgentInfoDTO>> call, Throwable t) {
+                Timber.tag("onFailure:").e("Api call failed: %s", t.getMessage());
+                Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+
+
+    }
+}//class
