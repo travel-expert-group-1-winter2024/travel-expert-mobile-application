@@ -63,8 +63,8 @@ public class EditProfileFragment extends Fragment {
     private String position;
     private TextView textFieldPosition;
 
-    private Map<TextView, String> initialAgentData = new HashMap<>();
-    private Map<TextView, Boolean> textChangedMap = new HashMap<>();
+    private final Map<TextView, String> initialAgentData = new HashMap<>();
+    private final Map<TextView, Boolean> textChangedMap = new HashMap<>();
 
 
     public EditProfileFragment() {
