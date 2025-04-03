@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -47,6 +48,10 @@ public class SupplierFragment extends Fragment {
         lvSuppliers = view.findViewById(R.id.lvSuppliers);
         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, supplierNames);
         lvSuppliers.setAdapter(adapter);
+
+        //  Back Button
+        ImageButton btnBack = view.findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> requireActivity().onBackPressed());
 
         fetchSuppliers();
 

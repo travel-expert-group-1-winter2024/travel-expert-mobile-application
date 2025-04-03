@@ -1,6 +1,8 @@
 package com.example.travelexpertmobileapplication.model;
+import com.google.gson.annotations.SerializedName;
 
 public class SupplierContact {
+    @SerializedName("id")
     private int supplierContactId;
     private String supconfirstname;
     private String supconlastname;

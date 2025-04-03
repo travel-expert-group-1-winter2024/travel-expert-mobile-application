@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -63,6 +64,8 @@ public class PackageDetailsFragment extends Fragment {
     private ListView listViewProductSuppliers;
     private boolean isEditMode = false;
     private Package packageDetails;
+
+    private ImageButton btnBack;
     private Calendar startDateCalendar = Calendar.getInstance();
     private Calendar endDateCalendar = Calendar.getInstance();
     private List<ProductSupplier> productSuppliers = new ArrayList<>(); // List of all ProductSuppliers
@@ -99,7 +102,12 @@ public class PackageDetailsFragment extends Fragment {
         btnCancel = view.findViewById(R.id.btnCancel);
         llEditButtons = view.findViewById(R.id.llEditButtons);
 
-//        setFieldsEnabled(false);
+        btnBack = view.findViewById(R.id.btnBack);
+
+        btnBack.setOnClickListener(v -> {
+            // Handle back navigation
+            requireActivity().onBackPressed();
+        });
 
         // Set up DatePicker for Start Date
         etStartDate.setOnClickListener(v -> showDatePickerDialog(etStartDate, startDateCalendar));
@@ -191,8 +199,7 @@ public class PackageDetailsFragment extends Fragment {
             btnCancel.setOnClickListener(v -> exitEditMode());
             exitEditMode();
             packageDetails = (Package) bundle.getSerializable("PackageDetails");
-//            packageDetails.setId((int) bundle.getInt("PackageID"));
-            // Populate fields with package details
+
             Log.d("Package Details in fragment", String.valueOf((int) bundle.getInt("PackageID")));
             etPackageName.setText(packageDetails.getPkgname());
             etPackageDesc.setText(packageDetails.getPkgdesc());

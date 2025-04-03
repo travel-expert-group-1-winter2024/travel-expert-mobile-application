@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.example.travelexpertmobileapplication.R;
@@ -30,6 +31,8 @@ public class PackagesFragment extends Fragment {
 
     ListView lvPackages;
     ArrayAdapter<String> adapter;
+
+    ImageButton btnBack;
     List<String> packageNames = new ArrayList<>();
     List<Package> packagesList = new ArrayList<>();
 
@@ -56,6 +59,12 @@ public class PackagesFragment extends Fragment {
         lvPackages = view.findViewById(R.id.lvPackages);
         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, packageNames);
         lvPackages.setAdapter(adapter);
+        btnBack = view.findViewById(R.id.btnBack);
+
+        btnBack.setOnClickListener(v -> {
+            // Handle back navigation
+            requireActivity().onBackPressed();
+        });
 
         // Fetch packages from the backend
         fetchPackages();
