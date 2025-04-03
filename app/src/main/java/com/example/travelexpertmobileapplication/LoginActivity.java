@@ -54,37 +54,37 @@ public class LoginActivity extends AppCompatActivity {
         // Set on click listener on the sign up text view
         btnLogin.setOnClickListener(v -> {
             // Get the username and password from the edit text fields
-            String username = etUsername.getText().toString();
+            String username = etUsername.getText().toString().toLowerCase();
             String password = etPassword.getText().toString();
 
             //TODO: uncomment this if we done everything
-//            if (username.isEmpty() || password.isEmpty()) {
-//                // Show an error message if the username or password is empty
-//                Toast.makeText(LoginActivity.this, "Username or password is empty", Toast.LENGTH_SHORT).show();
-//                return;
-//            }
-//
-//            Timber.i("Logging with user %s", username);
-//            Call<GenericApiResponse<LoginResponseDTO>> call = userAPIService.login(new LoginRequestDTO(username, password));
-//            call.enqueue(new Callback<GenericApiResponse<LoginResponseDTO>>() {
-//                @Override
-//                public void onResponse(Call<GenericApiResponse<LoginResponseDTO>> call, Response<GenericApiResponse<LoginResponseDTO>> response) {
-//                    if (response.body() != null && response.body().getData() != null) {
-//                        String token = response.body().getData().getToken();
-//                        SharedPrefUtil.saveToken(LoginActivity.this, token);
-//                    } else {
-//                        Toast.makeText(LoginActivity.this, "Failed to login", Toast.LENGTH_SHORT).show();
-//                        Timber.e("Failed to login: Response body is null");
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure
-//                        (Call<GenericApiResponse<LoginResponseDTO>> call, Throwable t) {
-//                    Toast.makeText(LoginActivity.this, "Failed to login", Toast.LENGTH_SHORT).show();
-//                    Timber.e(t, "Failed to login");
-//                }
-//            });
+            if (username.isEmpty() || password.isEmpty()) {
+                // Show an error message if the username or password is empty
+                Toast.makeText(LoginActivity.this, "Username or password is empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Timber.i("Logging with user %s", username);
+            Call<GenericApiResponse<LoginResponseDTO>> call = userAPIService.login(new LoginRequestDTO(username, password));
+            call.enqueue(new Callback<GenericApiResponse<LoginResponseDTO>>() {
+                @Override
+                public void onResponse(Call<GenericApiResponse<LoginResponseDTO>> call, Response<GenericApiResponse<LoginResponseDTO>> response) {
+                    if (response.body() != null && response.body().getData() != null) {
+                        String token = response.body().getData().getToken();
+                        SharedPrefUtil.saveToken(LoginActivity.this, token);
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Failed to login", Toast.LENGTH_SHORT).show();
+                        Timber.e("Failed to login: Response body is null");
+                    }
+                }
+
+                @Override
+                public void onFailure
+                        (Call<GenericApiResponse<LoginResponseDTO>> call, Throwable t) {
+                    Toast.makeText(LoginActivity.this, "Failed to login", Toast.LENGTH_SHORT).show();
+                    Timber.e(t, "Failed to login");
+                }
+            });
 
             // Create an intent to start the main activity
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);

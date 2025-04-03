@@ -19,6 +19,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
+                android:layout_gravity="center|center_horizontal|center_vertical"
                 android:background="@drawable/home_page_top_background">
 
                 <ImageView
@@ -35,24 +36,38 @@
                     android:id="@+id/agentGreeting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center|center_horizontal"
                     android:text="Hello ${Agent Name}"
                     android:textColor="#fffffe"
-                    android:textSize="30dp"
+                    android:textSize="28dp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="@+id/imageView"
-                    app:layout_constraintHorizontal_bias="0.458"
+                    app:layout_constraintHorizontal_bias="0.506"
                     app:layout_constraintStart_toStartOf="@+id/imageView"
                     app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal"
+                    android:text="Let's make sure everything is up to date!"
+                    android:textColor="#fffffe"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/agentGreeting"
+                    app:layout_constraintStart_toStartOf="@+id/agentGreeting"
+                    app:layout_constraintTop_toBottomOf="@+id/agentGreeting" />
+
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/outlined_button"
+                    android:id="@+id/btnEditProfile"
                     style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="264dp"
                     android:layout_height="56dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="28dp"
                     android:backgroundTint="@color/travelExpertsTeal"
                     android:foreground="@drawable/ripple_effect"
+                    android:gravity="center|center_horizontal"
                     android:text="Edit Profile"
                     android:textColor="@color/white"
                     app:cornerRadius="15dp"
