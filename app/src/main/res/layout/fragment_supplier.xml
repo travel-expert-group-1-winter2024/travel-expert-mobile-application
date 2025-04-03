@@ -9,30 +9,46 @@
     android:background="#fffffe"
     tools:context=".fragments.SupplierFragment">
 
-    <ListView
-        android:id="@+id/lvSuppliers"
-        android:layout_width="337dp"
-        android:layout_height="570dp"
-        android:textFilterEnabled="true"
+    <!-- Back Button -->
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Back Button"
+        android:padding="8dp"
+        android:src="@drawable/baseline_arrow_back_ios_24"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.422" />
+        app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Title -->
     <TextView
         android:id="@+id/tvSupplierTitle"
-        android:layout_width="136dp"
-        android:layout_height="33dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Supplier List"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="#181818"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
+    <!-- Supplier List -->
+    <ListView
+        android:id="@+id/lvSuppliers"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:textFilterEnabled="true"
+        app:layout_constraintTop_toBottomOf="@id/tvSupplierTitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.022" />
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
