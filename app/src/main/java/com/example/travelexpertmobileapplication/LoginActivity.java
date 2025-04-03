@@ -57,7 +57,6 @@ public class LoginActivity extends AppCompatActivity {
             String username = etUsername.getText().toString().toLowerCase();
             String password = etPassword.getText().toString();
 
-            //TODO: uncomment this if we done everything
             if (username.isEmpty() || password.isEmpty()) {
                 // Show an error message if the username or password is empty
                 Toast.makeText(LoginActivity.this, "Username or password is empty", Toast.LENGTH_SHORT).show();
