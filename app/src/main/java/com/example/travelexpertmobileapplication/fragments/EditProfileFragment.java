@@ -50,6 +50,7 @@ public class EditProfileFragment extends Fragment {
 //    TODO: saveUpdatedData method will save the new data to the db and re-inflate the Profile Page.
 //    TODO: Implement back button to return to the previous Fragment if user decides not to update data.
 
+    private Long id;
     private String firstName;
     private TextView textFieldFirstName;
     private String middleInitial;
@@ -73,6 +74,7 @@ public class EditProfileFragment extends Fragment {
 
 
     public static EditProfileFragment newInstance(
+            Long id,
             String firstName,
             String middleInitial,
             String lastName,
@@ -83,6 +85,7 @@ public class EditProfileFragment extends Fragment {
         EditProfileFragment fragment = new EditProfileFragment();
         Bundle args = new Bundle();
 
+        args.putLong("id", id);
         args.putString("firstName", firstName);
         args.putString("middleInitial", middleInitial);
         args.putString("lastName", lastName);
@@ -99,6 +102,7 @@ public class EditProfileFragment extends Fragment {
 
 
         if (getArguments() != null) {
+            id = getArguments().getLong("id");
             firstName = getArguments().getString("firstName");
             middleInitial = getArguments().getString("middleInitial");
             lastName = getArguments().getString("lastName");
@@ -269,18 +273,14 @@ public class EditProfileFragment extends Fragment {
 
 
         AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
-        Call<GenericApiResponse<AgentInfoDTO>> call = agentAPIService.updateAgentInfo("Bearer " + token, updatedAgentInfo);
+        Call<GenericApiResponse<AgentInfoDTO>> call = agentAPIService.updateAgentInfo("Bearer " + token,id, updatedAgentInfo);
 
         call.enqueue(new Callback<GenericApiResponse<AgentInfoDTO>>() {
             @Override
             public void onResponse(Call<GenericApiResponse<AgentInfoDTO>> call, Response<GenericApiResponse<AgentInfoDTO>> response) {
-                if (response.isSuccessful() && response.body() != null){
-                    //Handling success response
-                    GenericApiResponse<AgentInfoDTO> apiResponse = response.body();
-                    AgentInfoDTO savedAgentInfo = apiResponse.getData();
-
+                if (response.isSuccessful()){
                     //Toasting to notify user that their changes were saved successfully
-                    Toast.makeText(getContext(), "Awesome! Profile Saved Successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Awesome! Profile Saved Successfully", Toast.LENGTH_LONG).show();
                     inflateProfileFragment();
                 } else {
                     if (response.body() != null && response.body().getErrors() != null){
