@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +28,7 @@ public class SupplierDetailsFragment extends Fragment {
             etCity, etProvince, etPostal, etCountry, etBusinessPhone, etFax,
             etEmail, etWebsite, etAffiliationId, etSupplierId;
     private Button btnEdit, btnSave;
+    private ImageButton btnBack;
     private boolean isEditable = false;
     private SupplierContactAPIService api;
     private int supplierContactId;
@@ -41,7 +43,6 @@ public class SupplierDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_supplier_details, container, false);
         api = ApiClient.getClient().create(SupplierContactAPIService.class);
 
-        // 🔹 Initialize Views
         etSupplierContactId = view.findViewById(R.id.etSupplierContactId);
         etFirstName = view.findViewById(R.id.etFirstName);
         etLastName = view.findViewById(R.id.etLastName);
@@ -59,8 +60,10 @@ public class SupplierDetailsFragment extends Fragment {
         etSupplierId = view.findViewById(R.id.etSupplierId);
         btnEdit = view.findViewById(R.id.btnEdit);
         btnSave = view.findViewById(R.id.btnSave);
+        btnBack = view.findViewById(R.id.btnBack);
 
-        // 🔹 Get data from arguments
+        btnBack.setOnClickListener(v -> requireActivity().onBackPressed());
+
         Bundle args = getArguments();
         if (args != null) {
             supplierContactId = args.getInt("SupplierContactId");
@@ -81,10 +84,8 @@ public class SupplierDetailsFragment extends Fragment {
             etSupplierId.setText(String.valueOf(args.getInt("SupplierId")));
         }
 
-        // 🔹 Disable inputs initially
         setEditable(false);
 
-        // 🔹 Set button listeners
         btnEdit.setOnClickListener(v -> setEditable(true));
         btnSave.setOnClickListener(v -> saveSupplier());
 

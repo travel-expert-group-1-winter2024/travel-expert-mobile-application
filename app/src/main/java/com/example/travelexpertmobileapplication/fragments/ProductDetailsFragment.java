@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ public class ProductDetailsFragment extends Fragment {
 
     private EditText etProductId, etProductName;
     private Button btnEdit, btnSave;
+    private ImageButton btnBack;
     private Product currentProduct;
 
     @Nullable
@@ -39,9 +41,12 @@ public class ProductDetailsFragment extends Fragment {
         etProductName = view.findViewById(R.id.etProductName);
         btnEdit = view.findViewById(R.id.btnEdit);
         btnSave = view.findViewById(R.id.btnSave);
+        btnBack = view.findViewById(R.id.btnBack);
 
         etProductId.setEnabled(false);
         etProductName.setEnabled(false);
+
+        btnBack.setOnClickListener(v -> requireActivity().onBackPressed());
 
         Bundle args = getArguments();
         if (args != null) {
