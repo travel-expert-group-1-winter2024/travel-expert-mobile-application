@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         // Set on click listener on the sign up text view
         btnLogin.setOnClickListener(v -> {
             // Get the username and password from the edit text fields
-            String username = etUsername.getText().toString();
+            String username = etUsername.getText().toString().toLowerCase();
             String password = etPassword.getText().toString();
 
             //TODO: uncomment this if we done everything

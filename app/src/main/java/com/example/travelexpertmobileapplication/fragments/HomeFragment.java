@@ -87,13 +87,6 @@ public class HomeFragment extends Fragment {
         LinearLayout linearLayout_Products = view.findViewById(R.id.linearyLayout_Products);
 
 
-
-        //System.out.println(loginRequestDTO.getUsername());
-
-
-
-        //OnClick Handlers for each LinearLayout acting as a button.
-
         /**
          * LinearLayout acting as Packages "button"
          * OnClick Event Listener to load the Packages Fragment

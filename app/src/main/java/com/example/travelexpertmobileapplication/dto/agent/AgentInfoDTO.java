@@ -1,6 +1,6 @@
 package com.example.travelexpertmobileapplication.dto.agent;
 
-public class GetAgentInfoDTO {
+public class AgentInfoDTO {
     private Long id;
     private String agtFirstName;
     private String agtMiddleInitial;
