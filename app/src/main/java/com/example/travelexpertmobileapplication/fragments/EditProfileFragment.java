@@ -22,11 +22,13 @@ import com.example.travelexpertmobileapplication.dto.generic.ErrorInfo;
 import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
+import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -168,10 +170,25 @@ public class EditProfileFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                TextView textView = (TextView) getView().findFocus();
-                if (textView != null && initialAgentData.containsKey(textView)){
-                    if (!charSequence.toString().equals(initialAgentData.get(textView))){
-                        textChangedMap.put(textView, true);
+                // Directly compare text of each TextView with its initial value
+                if (charSequence != null) {
+                    String updatedText = charSequence.toString();
+                    if (textFieldFirstName.getText().toString().equals(initialAgentData.get(textFieldFirstName))) {
+                        textChangedMap.put(textFieldFirstName, false);
+                    } else {
+                        textChangedMap.put(textFieldFirstName, true);
+                    }
+                    if (textFieldMiddleInitial.getText().toString().equals(initialAgentData.get(textFieldMiddleInitial))) {
+                        textChangedMap.put(textFieldMiddleInitial, false);
+                    } else {
+                        textChangedMap.put(textFieldMiddleInitial, true);
+                    }
+                    // Add similar checks for the other TextViews (LastName, BusPhone, Email, Position)
+                    // Finally, check if any change occurred
+                    if (hasAnyTextChanged()) {
+                        activateButton(saveChanges);
+                    } else {
+                        deactivateButton(saveChanges);
                     }
                 }
             }
@@ -205,13 +222,15 @@ public class EditProfileFragment extends Fragment {
     }
 
     private void deactivateButton(MaterialButton saveChanges) {
-        Timber.tag("DEACTIVATING SAVE BUTTON");
-        saveChanges.setActivated(false);
+        Timber.tag("DEACTIVATING SAVE BUTTON").e("Button deactivated");
+        saveChanges.setEnabled(false);
+        saveChanges.setAlpha(0.5f);
     }
 
     private void activateButton(MaterialButton saveChanges) {
         Timber.tag("ACTIVATING SAVE BUTTON");
-        saveChanges.setActivated(true);
+        saveChanges.setEnabled(true);
+        saveChanges.setAlpha(1.0f);
     }
 
     private boolean hasAnyTextChanged(){
@@ -241,8 +260,16 @@ public class EditProfileFragment extends Fragment {
         updatedAgentInfo.setAgtEmail(updatedEmail);
         updatedAgentInfo.setAgtPosition(updatedPosition);
 
+        //Grabbing Token
+        String token = SharedPrefUtil.getToken(requireContext());
+        if (token == null) {
+            Toast.makeText(requireContext(), "Authentication token missing", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
-        Call<GenericApiResponse<AgentInfoDTO>> call = agentAPIService.updateAgentInfo(updatedAgentInfo);
+        Call<GenericApiResponse<AgentInfoDTO>> call = agentAPIService.updateAgentInfo("Bearer " + token, updatedAgentInfo);
 
         call.enqueue(new Callback<GenericApiResponse<AgentInfoDTO>>() {
             @Override

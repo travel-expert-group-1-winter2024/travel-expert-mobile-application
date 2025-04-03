@@ -29,7 +29,7 @@ public interface AgentAPIService {
     Call<GenericApiResponse<AgentInfoDTO>> getMyAgentInfo(@Header("Authorization") String token);
 
     @POST("/agents/update")
-    Call<GenericApiResponse<AgentInfoDTO>> updateAgentInfo(@Body AgentInfoDTO agentInfo);
+    Call<GenericApiResponse<AgentInfoDTO>> updateAgentInfo(@Header("Authorization") String token, @Body AgentInfoDTO agentInfo);
 
 
 
