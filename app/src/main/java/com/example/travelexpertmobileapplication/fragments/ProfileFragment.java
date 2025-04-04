@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
 import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
+import com.example.travelexpertmobileapplication.utils.SignOutUtil;
 import com.google.android.material.button.MaterialButton;
 
 import okhttp3.ResponseBody;
@@ -109,6 +111,7 @@ public class ProfileFragment extends Fragment {
         TextView textViewEmail = view.findViewById(R.id.textFieldEmail);
         TextView textViewPosition = view.findViewById(R.id.textFieldPosition);
         ImageView agentImage = view.findViewById(R.id.ivAgentProfilePic);
+        Button btnSignOut = view.findViewById(R.id.btnSignOut);
 
         //Grabbing Button Id
         MaterialButton btnEditProfile = view.findViewById(R.id.btnEditProfile);
@@ -117,6 +120,8 @@ public class ProfileFragment extends Fragment {
         btnEditProfile.setOnClickListener(v -> {
             openEditProfileFragment(bundle);
         });
+
+        btnSignOut.setOnClickListener(v -> SignOutUtil.signOut(requireContext()));
 
         // Handling JWT errors.
         String token = SharedPrefUtil.getToken(requireContext());
