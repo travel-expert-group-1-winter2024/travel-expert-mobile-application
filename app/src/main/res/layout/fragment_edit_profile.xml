@@ -28,7 +28,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/CircleImage"
-                app:srcCompat="@drawable/agent_profile_pic"
                 tools:layout_editor_absoluteX="112dp"
                 tools:layout_editor_absoluteY="12dp" />
 

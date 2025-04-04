@@ -283,8 +283,7 @@ public class EditProfileFragment extends Fragment {
 
         AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
         Call<GenericApiResponse<AgentDetailsResponseDTO>> call = agentAPIService.updateAgentInfo("Bearer " + token, id, updatedAgentInfo);
-
-        call.enqueue(new Callback<GenericApiResponse<AgentDetailsResponseDTO>>() {
+        call.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Response<GenericApiResponse<AgentDetailsResponseDTO>> response) {
                 if (response.isSuccessful()) {

@@ -156,7 +156,7 @@ public class ProfileFragment extends Fragment {
                                     bundle.putByteArray("agentImage", imageBytes);
 
                                     //Setting the agent info into the waiting and available TextViews.
-                                    agentGreeting.setText(String.format("Every detail matters,%s", agentInfo.getAgtFirstName()));
+                                    agentGreeting.setText(String.format("Every detail matters, %s", agentInfo.getAgtFirstName()));
                                     textViewFirstName.setText(agentInfo.getAgtFirstName());
                                     textViewMiddleInitial.setText(agentInfo.getAgtMiddleInitial());
                                     textViewLastName.setText(agentInfo.getAgtLastName());
