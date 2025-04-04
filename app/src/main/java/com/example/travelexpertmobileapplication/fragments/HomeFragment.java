@@ -1,5 +1,7 @@
 package com.example.travelexpertmobileapplication.fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +26,7 @@ import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
 import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,6 +40,7 @@ import timber.log.Timber;
 public class HomeFragment extends Fragment {
 
     private TextView agentGreeting;
+    private ImageView agentImage;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -95,7 +100,7 @@ public class HomeFragment extends Fragment {
         LinearLayout linearLayout_Products = view.findViewById(R.id.linearyLayout_Products);
 
         agentGreeting = view.findViewById(R.id.agentGreeting);
-
+        agentImage = view.findViewById(R.id.ivAgentProfilePic);
 
         /**
          * LinearLayout acting as Packages "button"
@@ -276,9 +281,32 @@ public class HomeFragment extends Fragment {
                     AgentDetailsResponseDTO agentInfo = response.body().getData();
                     Timber.tag("onResponse Call").d(String.valueOf(response));
 
-                    //Setting the agent info into the waiting and available TextViews.
-                    agentGreeting.setText(String.format("Welcome back %s", agentInfo.getAgtFirstName()));
+                    // get agent image
+                    Call<ResponseBody> callImage = agentAPIService.getAgentPhoto("Bearer " + token,agentInfo.getId().intValue());
+                    callImage.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                try {
+                                    byte[] imageBytes = response.body().bytes();
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                                    agentImage.setImageBitmap(bitmap);
+                                    agentGreeting.setText(String.format("Welcome back %s", agentInfo.getAgtFirstName()));
+                                } catch (Exception e) {
+                                    Timber.e(e, "Failed to convert image");
+                                }
+                            } else {
+                                Timber.tag("FAILED TO FETCH").d("Failed to fetch Agent Image! %s", response);
+                                Toast.makeText(requireContext(), "Failed to fetch Agent Image!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
 
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Timber.tag("onFailure:").e("Api call failed: %s", t.getMessage());
+                            Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } else {
                     Timber.tag("FAILED TO FETCH").d(String.valueOf("Failed to fetch Agent Information! " + response));
                     Toast.makeText(requireContext(), "Failed to fetch Agent Information!", Toast.LENGTH_SHORT).show();
