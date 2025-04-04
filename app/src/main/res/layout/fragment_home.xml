@@ -26,12 +26,12 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_marginTop="16dp"
-                    android:scaleType="centerCrop"
                     android:background="@drawable/circle_background"
-                    app:shapeAppearanceOverlay="@style/CircleImage"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:shapeAppearanceOverlay="@style/CircleImage" />
 
                 <TextView
                     android:id="@+id/agentGreeting"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ProfileFragment" >
+    tools:context=".fragments.ProfileFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -27,12 +27,12 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_marginTop="16dp"
-                    android:scaleType="centerCrop"
                     android:background="@drawable/circle_background"
-                    app:shapeAppearanceOverlay="@style/CircleImage"
+                    android:scaleType="centerCrop"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:shapeAppearanceOverlay="@style/CircleImage" />
 
                 <TextView
                     android:id="@+id/agentGreeting"

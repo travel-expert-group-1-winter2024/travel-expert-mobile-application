@@ -18,13 +18,16 @@
             android:layout_height="300dp"
             android:background="@drawable/home_page_top_background">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivAgentProfilePic"
-                android:layout_width="187dp"
-                android:layout_height="145dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/circle_background"
+                android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/CircleImage"
                 app:srcCompat="@drawable/agent_profile_pic"
                 tools:layout_editor_absoluteX="112dp"
                 tools:layout_editor_absoluteY="12dp" />
