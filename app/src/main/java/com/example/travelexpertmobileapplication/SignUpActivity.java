@@ -53,6 +53,8 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class SignUpActivity extends AppCompatActivity {
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_PICK = 2;
     EditText etFirstName, etMiddleInitial, etLastName, etPhoneNumber, etEmail, etPassword;
     Spinner spinnerAgency;
     Button btnSubmit;
@@ -65,9 +67,6 @@ public class SignUpActivity extends AppCompatActivity {
     Bitmap bitmapImage;
     ArrayAdapter<Agency> adapter;
     String imagePath;
-
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_IMAGE_PICK = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +132,7 @@ public class SignUpActivity extends AppCompatActivity {
         Call<Void> callAgent = agentAPIService.createAgent(
                 new CreateAgentRequestDTO(firstName, middleInitial, lastName, phoneNumber, email, (long) agency.getId())
         );
-        callAgent.enqueue(new Callback<Void>() {
+        callAgent.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -145,7 +144,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                     if (agentId != -1 && imagePath != null) {
                         // upload image
-                        uploadImage(imagePath, agentId);
+                        uploadImage(imagePath, firstName, lastName, agentId);
                     }
 
                     Toast.makeText(SignUpActivity.this, "Agent registered successfully", Toast.LENGTH_SHORT).show();
@@ -177,6 +176,7 @@ public class SignUpActivity extends AppCompatActivity {
                     Timber.e("Failed to register user: %s", response.code());
                 }
             }
+
             @Override
             public void onFailure(Call<SignUpResponseDTO> call, Throwable t) {
                 Toast.makeText(SignUpActivity.this, "Failed to register user", Toast.LENGTH_SHORT).show();
@@ -185,14 +185,25 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    private void uploadImage(String imagePath, int agentId) {
+    private void uploadImage(String imagePath, String firstName, String lastName, int agentId) {
 
         File file = new File(imagePath);
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+        if (!file.exists() || !file.canRead()) {
+            Timber.e("File does not exist or cannot be read: %s", imagePath);
+            return;
+        }
+
+        // rename file to "agent_<firstName>_<lastName>_<agentId>.jpg"
+        File renamedFile = new File(file.getParent(), generateImageName(firstName, lastName, agentId) + ".jpg");
+        boolean renamed = file.renameTo(renamedFile);
+        if (!renamed) {
+            Timber.e("Failed to rename file: %s", file.getAbsolutePath());
+        }
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), renamedFile);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", renamedFile.getName(), requestFile);
 
         Call<ResponseBody> call = agentAPIService.uploadAgentPhoto(agentId, body);
-        call.enqueue(new Callback<ResponseBody>() {
+        call.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
@@ -205,6 +216,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Timber.e(t, "Failed to upload image");
+                Toast.makeText(SignUpActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -323,9 +335,6 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
 
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageName = "image_" + timestamp;
-
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         if (storageDir != null && !storageDir.exists()) {
             boolean created = storageDir.mkdirs();
@@ -334,7 +343,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         try {
             //create image file
-            File imageFile = File.createTempFile(imageName, ".jpg", storageDir);
+            File imageFile = File.createTempFile(generateLocalImageName(), ".jpg", storageDir);
             //write image to file
             FileOutputStream fos = new FileOutputStream(imageFile);
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
@@ -355,6 +364,16 @@ public class SignUpActivity extends AppCompatActivity {
             Toast.makeText(this, "Error saving image", Toast.LENGTH_SHORT).show();
             Timber.e(e, "Error saving image");
         }
+    }
+
+    private String generateImageName(String firstName, String lastName, int agentId) {
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        return "agent_" + firstName.toLowerCase() + "_" + lastName.toLowerCase() + "_" + agentId + "_" + timestamp;
+    }
+
+    private String generateLocalImageName() {
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        return "agent_local_" + timestamp;
     }
 
     private int extractAgentIdFromLocationHeader(String location) {
