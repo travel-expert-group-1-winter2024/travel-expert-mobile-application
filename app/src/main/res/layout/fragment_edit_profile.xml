@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.EditProfileFragment">
 
 
@@ -20,39 +20,39 @@
 
             <ImageView
                 android:id="@+id/ivAgentProfilePic"
+                android:layout_width="187dp"
+                android:layout_height="145dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/agent_profile_pic"
-                android:layout_width="187dp"
-                android:layout_height="145dp"
                 tools:layout_editor_absoluteX="112dp"
                 tools:layout_editor_absoluteY="12dp" />
 
             <TextView
                 android:id="@+id/agentGreeting"
-                app:layout_constraintEnd_toEndOf="@+id/ivAgentProfilePic"
-                app:layout_constraintHorizontal_bias="0.458"
-                app:layout_constraintStart_toStartOf="@+id/ivAgentProfilePic"
-                app:layout_constraintTop_toBottomOf="@+id/ivAgentProfilePic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Edit Profile"
                 android:textColor="#fffffe"
                 android:textSize="30sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/ivAgentProfilePic"
+                app:layout_constraintHorizontal_bias="0.458"
+                app:layout_constraintStart_toStartOf="@+id/ivAgentProfilePic"
+                app:layout_constraintTop_toBottomOf="@+id/ivAgentProfilePic"
+                tools:ignore="HardcodedText"
                 tools:layout_editor_absoluteX="64dp"
-                tools:layout_editor_absoluteY="157dp"
-                tools:ignore="HardcodedText" />
+                tools:layout_editor_absoluteY="157dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveChanges"
                 style="@style/Widget.MaterialComponents.Button"
-                android:enabled="false"
                 android:layout_width="264dp"
                 android:layout_height="56dp"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@color/travelExpertsTeal"
+                android:enabled="false"
                 android:foreground="@drawable/ripple_effect"
                 android:text="Save Changes"
                 android:textColor="@color/white"
@@ -103,8 +103,7 @@
                     android:id="@+id/textFieldMiddleInitial"
                     android:layout_width="match_parent"
 
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content" />
 
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -140,8 +139,7 @@
                     android:id="@+id/textFieldBusPhoneNumber"
                     android:layout_width="match_parent"
 
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content" />
 
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -158,8 +156,7 @@
                     android:id="@+id/textFieldEmail"
                     android:layout_width="match_parent"
 
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content" />
 
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -176,8 +173,7 @@
                     android:id="@+id/textFieldPosition"
                     android:layout_width="match_parent"
 
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content" />
 
 
             </com.google.android.material.textfield.TextInputLayout>
