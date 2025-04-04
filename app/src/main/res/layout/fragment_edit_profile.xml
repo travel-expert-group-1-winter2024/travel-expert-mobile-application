@@ -19,7 +19,7 @@
             android:background="@drawable/home_page_top_background">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/ivAgentProfilePic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -31,10 +31,10 @@
 
             <TextView
                 android:id="@+id/agentGreeting"
-                app:layout_constraintEnd_toEndOf="@+id/imageView"
+                app:layout_constraintEnd_toEndOf="@+id/ivAgentProfilePic"
                 app:layout_constraintHorizontal_bias="0.458"
-                app:layout_constraintStart_toStartOf="@+id/imageView"
-                app:layout_constraintTop_toBottomOf="@+id/imageView"
+                app:layout_constraintStart_toStartOf="@+id/ivAgentProfilePic"
+                app:layout_constraintTop_toBottomOf="@+id/ivAgentProfilePic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Edit Profile"
