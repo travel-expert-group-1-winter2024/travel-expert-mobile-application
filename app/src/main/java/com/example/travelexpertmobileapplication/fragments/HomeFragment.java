@@ -3,12 +3,6 @@ package com.example.travelexpertmobileapplication.fragments;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +12,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
@@ -39,18 +38,15 @@ import timber.log.Timber;
  */
 public class HomeFragment extends Fragment {
 
-    private TextView agentGreeting;
-    private ImageView agentImage;
-
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private TextView agentGreeting;
+    private ImageView agentImage;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
 
 
     public HomeFragment() {
@@ -91,7 +87,6 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
 
-
         //Finding all Elements needed
         //LinearLayouts
         LinearLayout linearLayout_Packages = view.findViewById(R.id.linearLayout_Packages);
@@ -111,7 +106,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 //Adding animation to the button to improve user feedback.
                 Animation blink = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
-                blink.setAnimationListener(new Animation.AnimationListener(){
+                blink.setAnimationListener(new Animation.AnimationListener() {
 
                     @Override //Needed for setAnimationListener, not needed to implement.
                     public void onAnimationStart(Animation animation) {
@@ -149,7 +144,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
 
                 Animation blink = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
-                blink.setAnimationListener(new Animation.AnimationListener(){
+                blink.setAnimationListener(new Animation.AnimationListener() {
 
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -186,7 +181,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
 
                 Animation blink = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
-                blink.setAnimationListener(new Animation.AnimationListener(){
+                blink.setAnimationListener(new Animation.AnimationListener() {
 
                     @Override //Needed for setAnimationListener, not needed to implement.
                     public void onAnimationStart(Animation animation) {
@@ -224,7 +219,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
 
                 Animation blink = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
-                blink.setAnimationListener(new Animation.AnimationListener(){
+                blink.setAnimationListener(new Animation.AnimationListener() {
 
                     @Override //Needed for setAnimationListener, not needed to implement.
                     public void onAnimationStart(Animation animation) {
@@ -253,7 +248,6 @@ public class HomeFragment extends Fragment {
         });
 
 
-
         return view;
     }
 
@@ -263,7 +257,7 @@ public class HomeFragment extends Fragment {
 
         // Handling JWT errors.
         String token = SharedPrefUtil.getToken(requireContext());
-        if (token == null){
+        if (token == null) {
             Toast.makeText(requireContext(), "Authentication token missing", Toast.LENGTH_SHORT).show();
         } else {
             Timber.tag("Token Debug").d("Token being sent: Bearer %s", token);
@@ -271,18 +265,15 @@ public class HomeFragment extends Fragment {
 
         AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
         Call<GenericApiResponse<AgentDetailsResponseDTO>> call = agentAPIService.getMyAgentInfo("Bearer " + token);
-
-        call.enqueue(new Callback<GenericApiResponse<AgentDetailsResponseDTO>>() {
-
-
+        call.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Response<GenericApiResponse<AgentDetailsResponseDTO>> response) {
-                if (response.isSuccessful() && response.body() != null ) {
+                if (response.isSuccessful() && response.body() != null) {
                     AgentDetailsResponseDTO agentInfo = response.body().getData();
                     Timber.tag("onResponse Call").d(String.valueOf(response));
 
                     // get agent image
-                    Call<ResponseBody> callImage = agentAPIService.getAgentPhoto("Bearer " + token,agentInfo.getId().intValue());
+                    Call<ResponseBody> callImage = agentAPIService.getAgentPhoto("Bearer " + token, agentInfo.getId().intValue());
                     callImage.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -319,10 +310,5 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-
-
-
-
     }
 }//class
