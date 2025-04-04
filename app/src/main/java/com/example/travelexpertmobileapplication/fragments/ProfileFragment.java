@@ -108,6 +108,11 @@ public class ProfileFragment extends Fragment {
         //Grabbing Button Id
         MaterialButton btnEditProfile = view.findViewById(R.id.btnEditProfile);
 
+        //Edit Profile OnClick handler
+        btnEditProfile.setOnClickListener(v -> {
+            openEditProfileFragment(bundle);
+        });
+
         // Handling JWT errors.
         String token = SharedPrefUtil.getToken(requireContext());
         if (token == null) {
@@ -147,12 +152,6 @@ public class ProfileFragment extends Fragment {
                     Timber.tag("FAILED TO FETCH").d(String.valueOf("Failed to fetch Agent Information! " + response));
                     Toast.makeText(requireContext(), "Failed to fetch Agent Information!", Toast.LENGTH_SHORT).show();
                 }
-
-                //Edit Profile OnClick handler
-                btnEditProfile.setOnClickListener(v -> {
-                    openEditProfileFragment(bundle);
-                });
-
             }
 
             @Override
@@ -181,4 +180,5 @@ public class ProfileFragment extends Fragment {
         transaction.addToBackStack(null);
         transaction.commit();
     }
+    
 }//class
