@@ -43,6 +43,11 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
+        String previousToken = SharedPrefUtil.getToken(this);
+        if (previousToken != null) {
+            SharedPrefUtil.clearToken(this);
+        }
+
         // Initialize the views
         etUsername = findViewById(R.id.etLoginEmail);
         etPassword = findViewById(R.id.etLoginPassword);
