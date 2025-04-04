@@ -160,8 +160,6 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-
     }
 
     /**
@@ -180,5 +178,5 @@ public class ProfileFragment extends Fragment {
         transaction.addToBackStack(null);
         transaction.commit();
     }
-    
+
 }//class
