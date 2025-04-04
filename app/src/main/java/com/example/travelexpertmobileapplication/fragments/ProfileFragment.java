@@ -1,32 +1,35 @@
 package com.example.travelexpertmobileapplication.fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import timber.log.Timber;
-
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.dto.agent.AgentInfoDTO;
+import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
 import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
 import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
+import com.example.travelexpertmobileapplication.utils.SignOutUtil;
 import com.google.android.material.button.MaterialButton;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,7 +46,6 @@ public class ProfileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
 
 
     public ProfileFragment() {
@@ -88,9 +90,10 @@ public class ProfileFragment extends Fragment {
      * This method is called immediately after {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)} returns.
      * This method is used to grab any needed elements by ID, set up event listeners and handle any logic
      * that requires the main view to be ready.
-     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     *
+     * @param view               The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
+     *                           from a previous saved state as given here.
      */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -107,74 +110,97 @@ public class ProfileFragment extends Fragment {
         TextView textViewPhoneNumber = view.findViewById(R.id.textFieldBusPhoneNumber);
         TextView textViewEmail = view.findViewById(R.id.textFieldEmail);
         TextView textViewPosition = view.findViewById(R.id.textFieldPosition);
+        ImageView agentImage = view.findViewById(R.id.ivAgentProfilePic);
+        Button btnSignOut = view.findViewById(R.id.btnSignOut);
 
         //Grabbing Button Id
         MaterialButton btnEditProfile = view.findViewById(R.id.btnEditProfile);
 
+        //Edit Profile OnClick handler
+        btnEditProfile.setOnClickListener(v -> {
+            openEditProfileFragment(bundle);
+        });
+
+        btnSignOut.setOnClickListener(v -> SignOutUtil.signOut(requireContext()));
+
         // Handling JWT errors.
         String token = SharedPrefUtil.getToken(requireContext());
-        if (token == null){
+        if (token == null) {
             Toast.makeText(requireContext(), "Authentication token missing", Toast.LENGTH_SHORT).show();
         } else {
             Timber.tag("Token Debug").d("Token being sent: Bearer %s", token);
         }
 
         AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
-        Call<GenericApiResponse<AgentInfoDTO>> call = agentAPIService.getMyAgentInfo("Bearer " + token);
-
-        call.enqueue(new Callback<GenericApiResponse<AgentInfoDTO>>() {
-
-
+        Call<GenericApiResponse<AgentDetailsResponseDTO>> call = agentAPIService.getMyAgentInfo("Bearer " + token);
+        call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<GenericApiResponse<AgentInfoDTO>> call, Response<GenericApiResponse<AgentInfoDTO>> response) {
-                if (response.isSuccessful() && response.body() != null ) {
-                    AgentInfoDTO agentInfo = response.body().getData();
-                    Timber.tag("onResponse Call").d(String.valueOf(response));
+            public void onResponse(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Response<GenericApiResponse<AgentDetailsResponseDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    AgentDetailsResponseDTO agentInfo = response.body().getData();
 
-                    //Bundling up the Agent info to pass to EditProfileFragment
-                    bundle.putLong("id", agentInfo.getId());
-                    bundle.putString("firstName", agentInfo.getAgtFirstName());
-                    bundle.putString("middleInitial", agentInfo.getAgtMiddleInitial());
-                    bundle.putString("lastName", agentInfo.getAgtLastName());
-                    bundle.putString("busPhone", agentInfo.getAgtBusPhone());
-                    bundle.putString("email", agentInfo.getAgtEmail());
-                    bundle.putString("position", agentInfo.getAgtPosition());
+                    // get agent image
+                    Call<ResponseBody> callImage = agentAPIService.getAgentPhoto("Bearer " + token, agentInfo.getId().intValue());
+                    callImage.enqueue(new Callback<>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                try {
+                                    byte[] imageBytes = response.body().bytes();
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                                    agentImage.setImageBitmap(bitmap);
 
-                    //Setting the agent info into the waiting and available TextViews.
-                    agentGreeting.setText(String.format("Every detail matters,%s", agentInfo.getAgtFirstName()));
-                    textViewFirstName.setText(agentInfo.getAgtFirstName());
-                    textViewMiddleInitial.setText(agentInfo.getAgtMiddleInitial());
-                    textViewLastName.setText(agentInfo.getAgtLastName());
-                    textViewPhoneNumber.setText(agentInfo.getAgtBusPhone());
-                    textViewEmail.setText(agentInfo.getAgtEmail());
-                    textViewPosition.setText(agentInfo.getAgtPosition());
+                                    //Bundling up the Agent info to pass to EditProfileFragment
+                                    bundle.putLong("id", agentInfo.getId());
+                                    bundle.putString("firstName", agentInfo.getAgtFirstName());
+                                    bundle.putString("middleInitial", agentInfo.getAgtMiddleInitial());
+                                    bundle.putString("lastName", agentInfo.getAgtLastName());
+                                    bundle.putString("busPhone", agentInfo.getAgtBusPhone());
+                                    bundle.putString("email", agentInfo.getAgtEmail());
+                                    bundle.putString("position", agentInfo.getAgtPosition());
+                                    bundle.putByteArray("agentImage", imageBytes);
+
+                                    //Setting the agent info into the waiting and available TextViews.
+                                    agentGreeting.setText(String.format("Every detail matters, %s", agentInfo.getAgtFirstName()));
+                                    textViewFirstName.setText(agentInfo.getAgtFirstName());
+                                    textViewMiddleInitial.setText(agentInfo.getAgtMiddleInitial());
+                                    textViewLastName.setText(agentInfo.getAgtLastName());
+                                    textViewPhoneNumber.setText(agentInfo.getAgtBusPhone());
+                                    textViewEmail.setText(agentInfo.getAgtEmail());
+                                    textViewPosition.setText(agentInfo.getAgtPosition());
+                                } catch (Exception e) {
+                                    Timber.e(e, "Failed to convert image");
+                                }
+                            } else {
+                                Timber.tag("FAILED TO FETCH").d("Failed to fetch Agent Image! %s", response);
+                                Toast.makeText(requireContext(), "Failed to fetch Agent Image!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Timber.tag("onFailure:").e("Api call failed: %s", t.getMessage());
+                            Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } else {
                     Timber.tag("FAILED TO FETCH").d(String.valueOf("Failed to fetch Agent Information! " + response));
                     Toast.makeText(requireContext(), "Failed to fetch Agent Information!", Toast.LENGTH_SHORT).show();
                 }
-
-                //Edit Profile OnClick handler
-                btnEditProfile.setOnClickListener(v -> {
-                    openEditProfileFragment(bundle);
-                });
-
             }
 
             @Override
-            public void onFailure(Call<GenericApiResponse<AgentInfoDTO>> call, Throwable t) {
+            public void onFailure(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Throwable t) {
                 Timber.tag("onFailure:").e("Api call failed: %s", t.getMessage());
                 Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-
-
-
     }
 
     /**
      * This method is responsible for starting the process to inflate the Agent Edit Profile fragment.
      * It instantiates a new fragment, sets a bundle as arguments and starts/commits the transaction.
+     *
      * @param bundle A bundle containing the agent information collected from the API call in the {@link #onViewCreated(View, Bundle)}
      *               method.
      */
@@ -187,4 +213,5 @@ public class ProfileFragment extends Fragment {
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
 }//class

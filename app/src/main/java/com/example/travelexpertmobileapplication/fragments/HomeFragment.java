@@ -1,33 +1,31 @@
 package com.example.travelexpertmobileapplication.fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.dto.agent.AgentInfoDTO;
-import com.example.travelexpertmobileapplication.dto.agent.CreateAgentRequestDTO;
+import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
 import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
-import com.example.travelexpertmobileapplication.dto.user.LoginRequestDTO;
-import com.example.travelexpertmobileapplication.model.Agent;
-import com.example.travelexpertmobileapplication.model.Product;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
 import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,17 +38,15 @@ import timber.log.Timber;
  */
 public class HomeFragment extends Fragment {
 
-    private TextView agentGreeting;
-
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private TextView agentGreeting;
+    private ImageView agentImage;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
 
 
     public HomeFragment() {
@@ -91,7 +87,6 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
 
-
         //Finding all Elements needed
         //LinearLayouts
         LinearLayout linearLayout_Packages = view.findViewById(R.id.linearLayout_Packages);
@@ -100,7 +95,7 @@ public class HomeFragment extends Fragment {
         LinearLayout linearLayout_Products = view.findViewById(R.id.linearyLayout_Products);
 
         agentGreeting = view.findViewById(R.id.agentGreeting);
-
+        agentImage = view.findViewById(R.id.ivAgentProfilePic);
 
         /**
          * LinearLayout acting as Packages "button"
@@ -111,7 +106,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 //Adding animation to the button to improve user feedback.
                 Animation blink = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
-                blink.setAnimationListener(new Animation.AnimationListener(){
+                blink.setAnimationListener(new Animation.AnimationListener() {
 
                     @Override //Needed for setAnimationListener, not needed to implement.
                     public void onAnimationStart(Animation animation) {
@@ -149,7 +144,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
 
                 Animation blink = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
-                blink.setAnimationListener(new Animation.AnimationListener(){
+                blink.setAnimationListener(new Animation.AnimationListener() {
 
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -186,7 +181,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
 
                 Animation blink = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
-                blink.setAnimationListener(new Animation.AnimationListener(){
+                blink.setAnimationListener(new Animation.AnimationListener() {
 
                     @Override //Needed for setAnimationListener, not needed to implement.
                     public void onAnimationStart(Animation animation) {
@@ -224,7 +219,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
 
                 Animation blink = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
-                blink.setAnimationListener(new Animation.AnimationListener(){
+                blink.setAnimationListener(new Animation.AnimationListener() {
 
                     @Override //Needed for setAnimationListener, not needed to implement.
                     public void onAnimationStart(Animation animation) {
@@ -253,7 +248,6 @@ public class HomeFragment extends Fragment {
         });
 
 
-
         return view;
     }
 
@@ -263,27 +257,47 @@ public class HomeFragment extends Fragment {
 
         // Handling JWT errors.
         String token = SharedPrefUtil.getToken(requireContext());
-        if (token == null){
+        if (token == null) {
             Toast.makeText(requireContext(), "Authentication token missing", Toast.LENGTH_SHORT).show();
         } else {
             Timber.tag("Token Debug").d("Token being sent: Bearer %s", token);
         }
 
         AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
-        Call<GenericApiResponse<AgentInfoDTO>> call = agentAPIService.getMyAgentInfo("Bearer " + token);
-
-        call.enqueue(new Callback<GenericApiResponse<AgentInfoDTO>>() {
-
-
+        Call<GenericApiResponse<AgentDetailsResponseDTO>> call = agentAPIService.getMyAgentInfo("Bearer " + token);
+        call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<GenericApiResponse<AgentInfoDTO>> call, Response<GenericApiResponse<AgentInfoDTO>> response) {
-                if (response.isSuccessful() && response.body() != null ) {
-                    AgentInfoDTO agentInfo = response.body().getData();
+            public void onResponse(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Response<GenericApiResponse<AgentDetailsResponseDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    AgentDetailsResponseDTO agentInfo = response.body().getData();
                     Timber.tag("onResponse Call").d(String.valueOf(response));
 
-                    //Setting the agent info into the waiting and available TextViews.
-                    agentGreeting.setText(String.format("Welcome back %s", agentInfo.getAgtFirstName()));
+                    // get agent image
+                    Call<ResponseBody> callImage = agentAPIService.getAgentPhoto("Bearer " + token, agentInfo.getId().intValue());
+                    callImage.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                try {
+                                    byte[] imageBytes = response.body().bytes();
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                                    agentImage.setImageBitmap(bitmap);
+                                    agentGreeting.setText(String.format("Welcome back %s", agentInfo.getAgtFirstName()));
+                                } catch (Exception e) {
+                                    Timber.e(e, "Failed to convert image");
+                                }
+                            } else {
+                                Timber.tag("FAILED TO FETCH").d("Failed to fetch Agent Image! %s", response);
+                                Toast.makeText(requireContext(), "Failed to fetch Agent Image!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
 
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Timber.tag("onFailure:").e("Api call failed: %s", t.getMessage());
+                            Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } else {
                     Timber.tag("FAILED TO FETCH").d(String.valueOf("Failed to fetch Agent Information! " + response));
                     Toast.makeText(requireContext(), "Failed to fetch Agent Information!", Toast.LENGTH_SHORT).show();
@@ -291,15 +305,10 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<GenericApiResponse<AgentInfoDTO>> call, Throwable t) {
+            public void onFailure(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Throwable t) {
                 Timber.tag("onFailure:").e("Api call failed: %s", t.getMessage());
                 Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-
-
-
-
     }
 }//class

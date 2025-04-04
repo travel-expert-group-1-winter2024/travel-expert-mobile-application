@@ -43,6 +43,11 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
+        String previousToken = SharedPrefUtil.getToken(this);
+        if (previousToken != null) {
+            SharedPrefUtil.clearToken(this);
+        }
+
         // Initialize the views
         etUsername = findViewById(R.id.etLoginEmail);
         etPassword = findViewById(R.id.etLoginPassword);
@@ -57,7 +62,6 @@ public class LoginActivity extends AppCompatActivity {
             String username = etUsername.getText().toString().toLowerCase();
             String password = etPassword.getText().toString();
 
-            //TODO: uncomment this if we done everything
             if (username.isEmpty() || password.isEmpty()) {
                 // Show an error message if the username or password is empty
                 Toast.makeText(LoginActivity.this, "Username or password is empty", Toast.LENGTH_SHORT).show();
@@ -71,7 +75,17 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(Call<GenericApiResponse<LoginResponseDTO>> call, Response<GenericApiResponse<LoginResponseDTO>> response) {
                     if (response.body() != null && response.body().getData() != null) {
                         String token = response.body().getData().getToken();
+                        Timber.d("Login successful, token: %s", token);
                         SharedPrefUtil.saveToken(LoginActivity.this, token);
+
+                        // Create an intent to start the main activity
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+
+                        // Start the main activity
+                        startActivity(intent);
+
+                        // Finish the current activity
+                        finish();
                     } else {
                         Toast.makeText(LoginActivity.this, "Failed to login", Toast.LENGTH_SHORT).show();
                         Timber.e("Failed to login: Response body is null");
@@ -85,15 +99,6 @@ public class LoginActivity extends AppCompatActivity {
                     Timber.e(t, "Failed to login");
                 }
             });
-
-            // Create an intent to start the main activity
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-
-            // Start the main activity
-            startActivity(intent);
-
-            // Finish the current activity
-            finish();
         });
 
         tvSignUp.setOnClickListener(v -> {

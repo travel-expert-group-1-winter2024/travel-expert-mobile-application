@@ -5,9 +5,6 @@ import android.app.Application;
 import com.example.travelexpertmobileapplication.config.FileLoggingTree;
 
 import timber.log.Timber;
-import timber.log.Timber.DebugTree;
-import timber.log.Timber;
-
 
 
 public class MyApp extends Application {

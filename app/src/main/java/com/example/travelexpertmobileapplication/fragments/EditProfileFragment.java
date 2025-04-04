@@ -1,34 +1,37 @@
 package com.example.travelexpertmobileapplication.fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.provider.ContactsContract;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.dto.agent.AgentInfoDTO;
+import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
+import com.example.travelexpertmobileapplication.dto.agent.AgentUpdateDetailRequestDTO;
 import com.example.travelexpertmobileapplication.dto.generic.ErrorInfo;
 import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
 import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
+import com.example.travelexpertmobileapplication.utils.SignOutUtil;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,6 +53,8 @@ public class EditProfileFragment extends Fragment {
 //    TODO: saveUpdatedData method will save the new data to the db and re-inflate the Profile Page.
 //    TODO: Implement back button to return to the previous Fragment if user decides not to update data.
 
+    private final Map<TextView, String> initialAgentData = new HashMap<>();
+    private final Map<TextView, Boolean> textChangedMap = new HashMap<>();
     private Long id;
     private String firstName;
     private TextView textFieldFirstName;
@@ -63,9 +68,9 @@ public class EditProfileFragment extends Fragment {
     private TextView textFieldEmail;
     private String position;
     private TextView textFieldPosition;
-
-    private final Map<TextView, String> initialAgentData = new HashMap<>();
-    private final Map<TextView, Boolean> textChangedMap = new HashMap<>();
+    private byte[] agentImageByte;
+    private ImageView ivAgentProfilePic;
+    private Button btnSignOut;
 
 
     public EditProfileFragment() {
@@ -109,6 +114,7 @@ public class EditProfileFragment extends Fragment {
             busPhone = getArguments().getString("busPhone");
             email = getArguments().getString("email");
             position = getArguments().getString("position");
+            agentImageByte = getArguments().getByteArray("agentImage");
         }
     }
 
@@ -123,15 +129,19 @@ public class EditProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
         // Loading bundle data after the view has been inflated
         // Grabbing TextView Id's.
-         textFieldFirstName = view.findViewById(R.id.textFieldFirstName);
-         textFieldMiddleInitial = view.findViewById(R.id.textFieldMiddleInitial);
-         textFieldLastName = view.findViewById(R.id.textFieldLastName);
-         textFieldBusPhone = view.findViewById(R.id.textFieldBusPhoneNumber);
-         textFieldEmail = view.findViewById(R.id.textFieldEmail);
-         textFieldPosition = view.findViewById(R.id.textFieldPosition);
+        textFieldFirstName = view.findViewById(R.id.textFieldFirstName);
+        textFieldMiddleInitial = view.findViewById(R.id.textFieldMiddleInitial);
+        textFieldLastName = view.findViewById(R.id.textFieldLastName);
+        textFieldBusPhone = view.findViewById(R.id.textFieldBusPhoneNumber);
+        textFieldEmail = view.findViewById(R.id.textFieldEmail);
+        textFieldPosition = view.findViewById(R.id.textFieldPosition);
+        ivAgentProfilePic = view.findViewById(R.id.ivAgentProfilePic);
+        btnSignOut = view.findViewById(R.id.btnSignOut);
+
+        btnSignOut.setOnClickListener(v -> SignOutUtil.signOut(requireContext()));
 
         //Grabbing Button id;
         MaterialButton saveChanges = view.findViewById(R.id.btnSaveChanges);
@@ -143,6 +153,10 @@ public class EditProfileFragment extends Fragment {
         textFieldBusPhone.setText(busPhone);
         textFieldEmail.setText(email);
         textFieldPosition.setText(position);
+
+        // setting agent profile pictrure
+        Bitmap bitmap = BitmapFactory.decodeByteArray(agentImageByte, 0, agentImageByte.length);
+        ivAgentProfilePic.setImageBitmap(bitmap);
 
         //? Check for changes in the existing String objects
         //? If changes, activate the saveChanges button
@@ -212,13 +226,13 @@ public class EditProfileFragment extends Fragment {
         textFieldPosition.addTextChangedListener(textWatcher);
 
         //Check if Text has changed
-        if(hasAnyTextChanged()){
+        if (hasAnyTextChanged()) {
             activateButton(saveChanges);
         } else deactivateButton(saveChanges);
 
-        
+
         saveChanges.setOnClickListener(v -> {
-                saveAgentInfo();
+            saveAgentInfo();
 
         });
 
@@ -237,8 +251,8 @@ public class EditProfileFragment extends Fragment {
         saveChanges.setAlpha(1.0f);
     }
 
-    private boolean hasAnyTextChanged(){
-        for (Boolean hasChanged: textChangedMap.values()){
+    private boolean hasAnyTextChanged() {
+        for (Boolean hasChanged : textChangedMap.values()) {
             if (hasChanged) {
                 Timber.tag("EDIT PROFILE: CHANGES DETECTED");
                 return true;
@@ -256,13 +270,14 @@ public class EditProfileFragment extends Fragment {
         String updatedEmail = textFieldEmail.getText().toString();
         String updatedPosition = textFieldPosition.getText().toString();
 
-        AgentInfoDTO updatedAgentInfo = new AgentInfoDTO();
-        updatedAgentInfo.setAgtFirstName(updatedFirstName);
-        updatedAgentInfo.setAgtMiddleInitial(updatedMiddleInitial);
-        updatedAgentInfo.setAgtLastName(updatedLastName);
-        updatedAgentInfo.setAgtBusPhone(updatedBusPhone);
-        updatedAgentInfo.setAgtEmail(updatedEmail);
-        updatedAgentInfo.setAgtPosition(updatedPosition);
+        AgentUpdateDetailRequestDTO updatedAgentInfo = new AgentUpdateDetailRequestDTO(
+                updatedFirstName,
+                updatedMiddleInitial,
+                updatedLastName,
+                updatedBusPhone,
+                updatedEmail,
+                updatedPosition
+        );
 
         //Grabbing Token
         String token = SharedPrefUtil.getToken(requireContext());
@@ -273,17 +288,16 @@ public class EditProfileFragment extends Fragment {
 
 
         AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
-        Call<GenericApiResponse<AgentInfoDTO>> call = agentAPIService.updateAgentInfo("Bearer " + token,id, updatedAgentInfo);
-
-        call.enqueue(new Callback<GenericApiResponse<AgentInfoDTO>>() {
+        Call<GenericApiResponse<AgentDetailsResponseDTO>> call = agentAPIService.updateAgentInfo("Bearer " + token, id, updatedAgentInfo);
+        call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<GenericApiResponse<AgentInfoDTO>> call, Response<GenericApiResponse<AgentInfoDTO>> response) {
-                if (response.isSuccessful()){
+            public void onResponse(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Response<GenericApiResponse<AgentDetailsResponseDTO>> response) {
+                if (response.isSuccessful()) {
                     //Toasting to notify user that their changes were saved successfully
                     Toast.makeText(getContext(), "Awesome! Profile Saved Successfully", Toast.LENGTH_LONG).show();
                     inflateProfileFragment();
                 } else {
-                    if (response.body() != null && response.body().getErrors() != null){
+                    if (response.body() != null && response.body().getErrors() != null) {
                         // Error Handling
                         List<ErrorInfo> errors = response.body().getErrors();
                         String errorMessage = errors.isEmpty() ? "Failed to update profile" : errors.get(0).getDetail();
@@ -296,7 +310,7 @@ public class EditProfileFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<GenericApiResponse<AgentInfoDTO>> call, Throwable t) {
+            public void onFailure(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Throwable t) {
                 Timber.e("Network Failure");
                 Toast.makeText(getContext(), "Network failure, try again later", Toast.LENGTH_SHORT).show();
             }

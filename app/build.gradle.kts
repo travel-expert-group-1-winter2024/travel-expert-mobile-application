@@ -51,4 +51,5 @@ dependencies {
     implementation ("com.google.android.libraries.places:places:3.3.0")
     // For permission handling
     implementation ("pub.devrel:easypermissions:3.0.0")
+    implementation ("com.google.android.material:material:1.11.0")
 }

@@ -29,9 +29,6 @@ public class MainActivity extends AppCompatActivity {
         // Initialize components
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
-        // TODO: uncomment this later
-//        Timber.tag("JWT").d("Retrieved token: %s", SharedPrefUtil.getToken(this));
-
         // load the home fragment by default
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
