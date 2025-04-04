@@ -1,24 +1,16 @@
 package com.example.travelexpertmobileapplication.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
-
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import timber.log.Timber;
-
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
@@ -27,6 +19,11 @@ import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
 import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
 import com.google.android.material.button.MaterialButton;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,7 +40,6 @@ public class ProfileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
 
 
     public ProfileFragment() {
@@ -88,9 +84,10 @@ public class ProfileFragment extends Fragment {
      * This method is called immediately after {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)} returns.
      * This method is used to grab any needed elements by ID, set up event listeners and handle any logic
      * that requires the main view to be ready.
-     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     *
+     * @param view               The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
+     *                           from a previous saved state as given here.
      */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -113,7 +110,7 @@ public class ProfileFragment extends Fragment {
 
         // Handling JWT errors.
         String token = SharedPrefUtil.getToken(requireContext());
-        if (token == null){
+        if (token == null) {
             Toast.makeText(requireContext(), "Authentication token missing", Toast.LENGTH_SHORT).show();
         } else {
             Timber.tag("Token Debug").d("Token being sent: Bearer %s", token);
@@ -123,11 +120,9 @@ public class ProfileFragment extends Fragment {
         Call<GenericApiResponse<AgentDetailsResponseDTO>> call = agentAPIService.getMyAgentInfo("Bearer " + token);
 
         call.enqueue(new Callback<GenericApiResponse<AgentDetailsResponseDTO>>() {
-
-
             @Override
             public void onResponse(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Response<GenericApiResponse<AgentDetailsResponseDTO>> response) {
-                if (response.isSuccessful() && response.body() != null ) {
+                if (response.isSuccessful() && response.body() != null) {
                     AgentDetailsResponseDTO agentInfo = response.body().getData();
                     Timber.tag("onResponse Call").d(String.valueOf(response));
 
@@ -168,13 +163,12 @@ public class ProfileFragment extends Fragment {
         });
 
 
-
-
     }
 
     /**
      * This method is responsible for starting the process to inflate the Agent Edit Profile fragment.
      * It instantiates a new fragment, sets a bundle as arguments and starts/commits the transaction.
+     *
      * @param bundle A bundle containing the agent information collected from the API call in the {@link #onViewCreated(View, Bundle)}
      *               method.
      */
