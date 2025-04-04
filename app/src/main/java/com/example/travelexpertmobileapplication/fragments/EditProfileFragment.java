@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
 import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
+import com.example.travelexpertmobileapplication.utils.SignOutUtil;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.HashMap;
@@ -68,6 +70,7 @@ public class EditProfileFragment extends Fragment {
     private TextView textFieldPosition;
     private byte[] agentImageByte;
     private ImageView ivAgentProfilePic;
+    private Button btnSignOut;
 
 
     public EditProfileFragment() {
@@ -136,6 +139,9 @@ public class EditProfileFragment extends Fragment {
         textFieldEmail = view.findViewById(R.id.textFieldEmail);
         textFieldPosition = view.findViewById(R.id.textFieldPosition);
         ivAgentProfilePic = view.findViewById(R.id.ivAgentProfilePic);
+        btnSignOut = view.findViewById(R.id.btnSignOut);
+
+        btnSignOut.setOnClickListener(v -> SignOutUtil.signOut(requireContext()));
 
         //Grabbing Button id;
         MaterialButton saveChanges = view.findViewById(R.id.btnSaveChanges);
