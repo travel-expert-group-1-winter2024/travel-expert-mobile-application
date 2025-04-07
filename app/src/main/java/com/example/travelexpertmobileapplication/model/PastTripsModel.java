@@ -10,7 +10,7 @@ public class PastTripsModel {
     private double basePrice;
     private double agencyCommission;
     private int bookingId;
-    private int agentId;
+    private int agentid;
     private int customerId;
     private String firstname;
     private String lastname;
@@ -93,11 +93,11 @@ public class PastTripsModel {
     }
 
     public int getAgentId() {
-        return agentId;
+        return agentid;
     }
 
-    public void setAgentId(int agentId) {
-        this.agentId = agentId;
+    public void setAgentId(int agentid) {
+        this.agentid = agentid;
     }
 
     public int getCustomerId() {

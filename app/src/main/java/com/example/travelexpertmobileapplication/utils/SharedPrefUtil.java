@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import com.example.travelexpertmobileapplication.fragments.CustomerFragment;
+
 import timber.log.Timber;
 
 public class SharedPrefUtil {
@@ -45,6 +47,25 @@ public class SharedPrefUtil {
         SharedPreferences prefs = getEncryptedPrefs(context);
         if (prefs != null) {
             prefs.edit().remove("jwt_token").apply();
+        }
+    }
+
+    public static void saveAgentId(Context context, Long userId) {
+        SharedPreferences prefs = getEncryptedPrefs(context);
+        if (prefs != null) {
+            prefs.edit().putString("agent_id", userId.toString()).apply();
+        }
+    }
+
+    public static String getAgentId(Context context) {
+        SharedPreferences prefs = getEncryptedPrefs(context);
+        return prefs != null ? prefs.getString("agent_id", null) : null;
+    }
+
+    public static void clearAgentId(Context context) {
+        SharedPreferences prefs = getEncryptedPrefs(context);
+        if (prefs != null) {
+            prefs.edit().remove("agent_id").apply();
         }
     }
 }

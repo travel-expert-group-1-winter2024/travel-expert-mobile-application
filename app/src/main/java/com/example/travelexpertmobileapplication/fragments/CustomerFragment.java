@@ -17,6 +17,7 @@ import com.example.travelexpertmobileapplication.model.Customer;
 import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.CustomerAPIService;
+import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
@@ -73,19 +74,30 @@ public class CustomerFragment extends Fragment {
             @Override
             public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    JsonArray customersArray = response.body();  // Response is an array of customers
+                    JsonArray customersArray = response.body();
+                    List<Customer> allCustomers = new Gson().fromJson(customersArray, new TypeToken<List<Customer>>() {}.getType());
 
                     // Parse the JSON array into a list of Customer objects
                     List<Customer> customers = new Gson().fromJson(customersArray, new TypeToken<List<Customer>>(){}.getType());
-
+                    String agentIdStr = SharedPrefUtil.getAgentId(requireContext());
+                    List<Customer> filteredCustomers = new ArrayList<>();
+                    for (Customer customer : allCustomers) {
+                        if (customer.getAgentId() ==  Integer.parseInt(agentIdStr)) {
+                            filteredCustomers.add(customer);
+                        }
+                    }
                     // Clear existing list and add new customer data
                     customersList.clear();
-                    customersList.addAll(customers);
+                    customersList.addAll(filteredCustomers);
 
                     // Update customer names list for display
                     customerNames.clear();
                     for (Customer customer : customersList) {
                         customerNames.add(customer.getCustfirstname() + " " + customer.getCustlastname());
+                    }
+
+                    if(customersList.isEmpty()){
+                        customerNames.add("No customers found");
                     }
 
                     // Notify adapter of data change
