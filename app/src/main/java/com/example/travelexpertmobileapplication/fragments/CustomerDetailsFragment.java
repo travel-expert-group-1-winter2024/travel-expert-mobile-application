@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.travelexpertmobileapplication.model.Customer;
@@ -28,7 +29,7 @@ public class CustomerDetailsFragment extends Fragment {
 
     EditText etAgentID, etEmail, etHomePhone, etBusinessPhone, etCountry, etPostalCode,etCustomerID, etProvince, etCity, etAddress, etFirstName, etLastName;
     Button saveBtn, editBtn;
-
+    ImageButton btnBack4;
     public CustomerDetailsFragment() {
         // Required empty public constructor
     }
@@ -71,6 +72,9 @@ public class CustomerDetailsFragment extends Fragment {
         // Initialize Buttons
         saveBtn = view.findViewById(R.id.saveBtn);
         editBtn = view.findViewById(R.id.editBtn);
+        btnBack4 = view.findViewById(R.id.btnBack4);
+        btnBack4.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
+
 
         // Set default data (You can retrieve from arguments or a database)
         Bundle args = getArguments();
