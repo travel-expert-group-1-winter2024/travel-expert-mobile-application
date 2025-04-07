@@ -20,6 +20,7 @@ import com.example.travelexpertmobileapplication.model.PastTripsModel;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.BookingDetailAPIService;
 import com.example.travelexpertmobileapplication.network.api.PackageAPIService;
+import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,16 +80,21 @@ public class PastTripsFragment extends Fragment {
                     tripDataList.clear();
                     tripDataL.clear();
 
+                    String agentIdStr = SharedPrefUtil.getAgentId(requireContext());
+                    if (agentIdStr == null || agentIdStr.trim().isEmpty()) {
+                        Toast.makeText(getContext(), "Agent ID not found", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     for (PastTripsModel trip : response.body()) {
-                        tripDataList.add(trip);
-                        tripDataL.add(trip.getFirstName() + " " + trip.getLastName() + "\n" + trip.getDescription());
+                        if (trip.getAgentId() == Integer.parseInt(agentIdStr)) {
+                            tripDataList.add(trip);
+                            tripDataL.add(trip.getFirstName() + " " + trip.getLastName() + "\n" + trip.getDescription());
+                        }
+                    }
+                    if (tripDataList.isEmpty()) {
+                        tripDataL.add("No Trips found");
                     }
 
-//                    // ✅ Ensure UI updates happen on the main thread
-//                    requireActivity().runOnUiThread(() -> {
-//                        adapter.notifyDataSetChanged();  // ✅ Refresh ListView
-//                        setupItemClickListener(); // ✅ Set click listener after data loads
-//                    });
                     adapter.notifyDataSetChanged();
                 } else {
                     Toast.makeText(getContext(), "Failed to get data!", Toast.LENGTH_SHORT).show();
@@ -101,6 +107,7 @@ public class PastTripsFragment extends Fragment {
             }
         });
     }
+
 
     private void setupItemClickListener(int position) {
         if (position < 0 || position >= tripDataList.size()) return;
