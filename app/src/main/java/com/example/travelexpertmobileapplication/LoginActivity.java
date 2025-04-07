@@ -1,6 +1,10 @@
 package com.example.travelexpertmobileapplication;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,13 +17,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
 import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.dto.user.LoginRequestDTO;
 import com.example.travelexpertmobileapplication.dto.user.LoginResponseDTO;
 import com.example.travelexpertmobileapplication.network.ApiClient;
+import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
 import com.example.travelexpertmobileapplication.network.api.UserAPIService;
 import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     Button btnLogin;
     TextView tvSignUp;
     UserAPIService userAPIService;
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +82,8 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<GenericApiResponse<LoginResponseDTO>> call, Response<GenericApiResponse<LoginResponseDTO>> response) {
                     if (response.body() != null && response.body().getData() != null) {
-                        String token = response.body().getData().getToken();
+                        token = response.body().getData().getToken();
+                        getAgentInfo();
                         Timber.d("Login successful, token: %s", token);
                         SharedPrefUtil.saveToken(LoginActivity.this, token);
 
@@ -91,7 +100,6 @@ public class LoginActivity extends AppCompatActivity {
                         Timber.e("Failed to login: Response body is null");
                     }
                 }
-
                 @Override
                 public void onFailure
                         (Call<GenericApiResponse<LoginResponseDTO>> call, Throwable t) {
@@ -106,6 +114,25 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
             // Start the sign up activity
             startActivity(intent);
+        });
+    }
+
+    public void getAgentInfo() {
+        AgentAPIService agentAPIService = ApiClient.getClient().create(AgentAPIService.class);
+        Call<GenericApiResponse<AgentDetailsResponseDTO>> call = agentAPIService.getMyAgentInfo("Bearer " + token);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Response<GenericApiResponse<AgentDetailsResponseDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    AgentDetailsResponseDTO agentInfo = response.body().getData();
+                    SharedPrefUtil.saveAgentId(LoginActivity.this, agentInfo.getId());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GenericApiResponse<AgentDetailsResponseDTO>> call, Throwable t) {
+                Timber.tag("onFailure:").e("Api call failed: %s", t.getMessage());
+            }
         });
     }
 }
