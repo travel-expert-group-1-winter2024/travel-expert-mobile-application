@@ -6,16 +6,20 @@ public class LoginResponseDTO {
     private UUID id;
     private String name;
     private String email;
-    private String[] roles;
-
+    private String[] role;
+    private Integer customerId;
+    private Integer agentId;
+    
     public LoginResponseDTO() {
     }
 
-    public LoginResponseDTO(UUID id, String name, String email, String[] roles) {
+    public LoginResponseDTO(UUID id, String name, String email, String[] role, Integer customerId, Integer agentId) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.roles = roles;
+        this.role = role;
+        this.customerId = customerId;
+        this.agentId = agentId;
     }
 
     public UUID getId() {
@@ -30,7 +34,15 @@ public class LoginResponseDTO {
         return email;
     }
 
-    public String[] getRoles() {
-        return roles;
+    public String[] getRole() {
+        return role;
+    }
+
+    public Integer getCustomerId() {
+        return customerId;
+    }
+
+    public Integer getAgentId() {
+        return agentId;
     }
 }
