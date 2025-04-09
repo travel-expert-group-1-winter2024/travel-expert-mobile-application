@@ -1,10 +1,6 @@
 package com.example.travelexpertmobileapplication;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
 import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
+import com.example.travelexpertmobileapplication.dto.user.AuthResponseDTO;
 import com.example.travelexpertmobileapplication.dto.user.LoginRequestDTO;
 import com.example.travelexpertmobileapplication.dto.user.LoginResponseDTO;
 import com.example.travelexpertmobileapplication.network.ApiClient;
@@ -26,7 +23,6 @@ import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
 import com.example.travelexpertmobileapplication.network.api.UserAPIService;
 import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -77,12 +73,18 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             Timber.i("Logging with user %s", username);
-            Call<GenericApiResponse<LoginResponseDTO>> call = userAPIService.login(new LoginRequestDTO(username, password));
-            call.enqueue(new Callback<GenericApiResponse<LoginResponseDTO>>() {
+            Call<AuthResponseDTO<LoginResponseDTO>> call = userAPIService.login(new LoginRequestDTO(username, password));
+            call.enqueue(new Callback<>() {
                 @Override
-                public void onResponse(Call<GenericApiResponse<LoginResponseDTO>> call, Response<GenericApiResponse<LoginResponseDTO>> response) {
+                public void onResponse(Call<AuthResponseDTO<LoginResponseDTO>> call, Response<AuthResponseDTO<LoginResponseDTO>> response) {
                     if (response.body() != null && response.body().getData() != null) {
-                        token = response.body().getData().getToken();
+                        String[] roles = response.body().getData().getRole();
+                        if (roles.length == 1 && "CUSTOMER".equalsIgnoreCase(roles[0])) {
+                            Toast.makeText(LoginActivity.this, "Customers cannot log in here.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        token = response.body().getToken();
                         getAgentInfo();
                         Timber.d("Login successful, token: %s", token);
                         SharedPrefUtil.saveToken(LoginActivity.this, token);
@@ -100,9 +102,10 @@ public class LoginActivity extends AppCompatActivity {
                         Timber.e("Failed to login: Response body is null");
                     }
                 }
+
                 @Override
                 public void onFailure
-                        (Call<GenericApiResponse<LoginResponseDTO>> call, Throwable t) {
+                        (Call<AuthResponseDTO<LoginResponseDTO>> call, Throwable t) {
                     Toast.makeText(LoginActivity.this, "Failed to login", Toast.LENGTH_SHORT).show();
                     Timber.e(t, "Failed to login");
                 }
