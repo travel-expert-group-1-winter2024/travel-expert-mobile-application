@@ -78,6 +78,12 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<AuthResponseDTO<LoginResponseDTO>> call, Response<AuthResponseDTO<LoginResponseDTO>> response) {
                     if (response.body() != null && response.body().getData() != null) {
+                        String[] roles = response.body().getData().getRole();
+                        if (roles.length == 1 && "CUSTOMER".equalsIgnoreCase(roles[0])) {
+                            Toast.makeText(LoginActivity.this, "Customers cannot log in here.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
                         token = response.body().getToken();
                         getAgentInfo();
                         Timber.d("Login successful, token: %s", token);
