@@ -93,6 +93,7 @@ public class HomeFragment extends Fragment {
         LinearLayout linearLayout_Customers = view.findViewById(R.id.linearyLayout_Customers);
         LinearLayout linearLayout_Suppliers = view.findViewById(R.id.linearyLayout_Suppliers);
         LinearLayout linearLayout_Products = view.findViewById(R.id.linearyLayout_Products);
+        LinearLayout linearLayout_PastTrips = view.findViewById(R.id.linearyLayout_PastTrips);
 
         agentGreeting = view.findViewById(R.id.agentGreeting);
         agentImage = view.findViewById(R.id.ivAgentProfilePic);
@@ -101,6 +102,41 @@ public class HomeFragment extends Fragment {
          * LinearLayout acting as Packages "button"
          * OnClick Event Listener to load the Packages Fragment
          */
+
+        linearLayout_PastTrips.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Adding animation to the button to improve user feedback.
+                Animation blink = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
+                blink.setAnimationListener(new Animation.AnimationListener() {
+
+                    @Override //Needed for setAnimationListener, not needed to implement.
+                    public void onAnimationStart(Animation animation) {
+                        return;
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        //Loading the fragment
+                        Fragment pastTripsFragment = new PastTripsFragment();
+                        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, pastTripsFragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                        return;
+                    }
+                });
+
+                linearLayout_PastTrips.startAnimation(blink);
+
+
+            }
+        });
+
         linearLayout_Packages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
