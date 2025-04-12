@@ -53,8 +53,8 @@ public class ProductDetailsFragment extends Fragment {
         if (args == null) {
             Timber.tag("Product Details Fragment").e("Args are null");
         } else {
-            int productId = args.getInt("productId");
-            String productName = args.getString("productName");
+            int productId = args.getInt("id");
+            String productName = args.getString("prodName");
 
             currentProduct = new Product();
             currentProduct.setProductId(productId);

@@ -97,10 +97,6 @@ public class ModernProductsFragment extends Fragment {
                     }.getType());
                     productList.clear();
                     productList.addAll(products);
-//                    for (Product product : productList) {
-//                        Timber.tag("Data Fetch").e("Fetched Product: %s", product.toString()); //! Debugging
-//
-//                    }
 
 
                     adapter.notifyDataSetChanged();

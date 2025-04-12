@@ -71,8 +71,8 @@ public class ProductsAdapter extends RecyclerView.Adapter<SupplierAdapter.MyView
             //* Passing data with bundles
             Bundle bundle = new Bundle();
 
-            bundle.putInt("ProductId", data.getProductId());
-            bundle.putString("ProductName", data.getProdname());
+            bundle.putInt("id", data.getProductId());
+            bundle.putString("prodName", data.getProdname());
 
             productDetailsFragment.setArguments(bundle);
 
