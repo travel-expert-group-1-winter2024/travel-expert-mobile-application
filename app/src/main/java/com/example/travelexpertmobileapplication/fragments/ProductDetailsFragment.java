@@ -21,6 +21,7 @@ import com.example.travelexpertmobileapplication.network.api.ProductAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class ProductDetailsFragment extends Fragment {
 
@@ -49,9 +50,11 @@ public class ProductDetailsFragment extends Fragment {
         btnBack.setOnClickListener(v -> requireActivity().onBackPressed());
 
         Bundle args = getArguments();
-        if (args != null) {
-            int productId = args.getInt("productId");
-            String productName = args.getString("productName");
+        if (args == null) {
+            Timber.tag("Product Details Fragment").e("Args are null");
+        } else {
+            int productId = args.getInt("id");
+            String productName = args.getString("prodName");
 
             currentProduct = new Product();
             currentProduct.setProductId(productId);

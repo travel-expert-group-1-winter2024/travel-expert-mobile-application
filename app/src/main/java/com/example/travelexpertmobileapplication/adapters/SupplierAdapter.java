@@ -1,10 +1,8 @@
-package com.example.travelexpertmobileapplication;
+package com.example.travelexpertmobileapplication.adapters;
 
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +13,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.fragments.SupplierDetailsFragment;
 import com.example.travelexpertmobileapplication.model.SupplierContact;
 
@@ -71,11 +70,11 @@ public class SupplierAdapter extends RecyclerView.Adapter<SupplierAdapter.MyView
 
             //* Passing data using bundles
             Bundle bundle = new Bundle();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                bundle.putString("item_title", data.getSupconfirstname());
-                bundle.putString("item_description", data.getSupconcompany());
-
-            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+//                bundle.putString("item_title", data.getSupconfirstname());
+//                bundle.putString("item_description", data.getSupconcompany());
+//
+//            }
 
             //* Handle item tap
             bundle.putInt("SupplierContactId", data.getSupplierContactId());
