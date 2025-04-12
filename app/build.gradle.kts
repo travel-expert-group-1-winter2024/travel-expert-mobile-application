@@ -52,4 +52,7 @@ dependencies {
     // For permission handling
     implementation ("pub.devrel:easypermissions:3.0.0")
     implementation ("com.google.android.material:material:1.11.0")
+    // Dependencies for RecyclerView and CardView
+    implementation ("androidx.recyclerview:recyclerview:1.3.0")
+    implementation ("androidx.cardview:cardview:1.0.0")
 }

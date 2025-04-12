@@ -78,8 +78,10 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<AuthResponseDTO<LoginResponseDTO>> call, Response<AuthResponseDTO<LoginResponseDTO>> response) {
                     if (response.body() != null && response.body().getData() != null) {
+                        Timber.d("This is the response body %s:", response.body());
                         String[] roles = response.body().getData().getRole();
-                        if (roles.length == 1 && "CUSTOMER".equalsIgnoreCase(roles[0])) {
+                        Timber.d("Roles: %s", (Object) roles);
+                        if (roles != null && roles.length == 1 && "CUSTOMER".equalsIgnoreCase(roles[0])) {
                             Toast.makeText(LoginActivity.this, "Customers cannot log in here.", Toast.LENGTH_SHORT).show();
                             return;
                         }
