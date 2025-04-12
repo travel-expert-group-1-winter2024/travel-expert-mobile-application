@@ -267,9 +267,11 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         //Loading the fragment
-                        Fragment productFragment = new ProductFragment();
+                        //Fragment productFragment = new ProductFragment();
+                        Fragment modernProductFragment = new ModernProductsFragment();
                         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                        transaction.replace(R.id.fragment_container, productFragment);
+                        //transaction.replace(R.id.fragment_container, productFragment);
+                        transaction.replace(R.id.fragment_container, modernProductFragment);
                         transaction.addToBackStack(null);
                         transaction.commit();
                     }
