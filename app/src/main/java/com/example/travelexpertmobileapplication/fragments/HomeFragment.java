@@ -118,9 +118,11 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         //Loading the fragment
-                        Fragment pastTripsFragment = new PastTripsFragment();
+                        Fragment modernPastTripsFragment = new ModernPastTripsFragment();
+                        //Fragment pastTripsFragment = new PastTripsFragment();
                         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                        transaction.replace(R.id.fragment_container, pastTripsFragment);
+                        //transaction.replace(R.id.fragment_container, pastTripsFragment);
+                        transaction.replace(R.id.fragment_container, modernPastTripsFragment);
                         transaction.addToBackStack(null);
                         transaction.commit();
                     }

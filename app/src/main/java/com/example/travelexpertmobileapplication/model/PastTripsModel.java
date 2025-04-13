@@ -167,4 +167,6 @@ public class PastTripsModel {
     public String getCustomerName() {
         return getFirstName() + " " + getLastName();
     }
+
+
 }

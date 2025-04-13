@@ -58,8 +58,6 @@ public class SupplierAdapter extends RecyclerView.Adapter<SupplierAdapter.MyView
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         // * Grabbing the data for this position
         SupplierContact data = supplierList.get(position);
-//        holder.title.setText(data.getSupconfirstname()); //* Setting title text to be the first name of the contact.
-//        holder.description.setText(data.getSupconcompany()); //* Setting the description to be the company name
         holder.title.setText(data.getSupconfirstname() != null ? data.getSupconfirstname() : "No Name");
         holder.description.setText(data.getSupconcompany() != null ? data.getSupconcompany() : "No Company");
 
@@ -70,11 +68,6 @@ public class SupplierAdapter extends RecyclerView.Adapter<SupplierAdapter.MyView
 
             //* Passing data using bundles
             Bundle bundle = new Bundle();
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-//                bundle.putString("item_title", data.getSupconfirstname());
-//                bundle.putString("item_description", data.getSupconcompany());
-//
-//            }
 
             //* Handle item tap
             bundle.putInt("SupplierContactId", data.getSupplierContactId());
