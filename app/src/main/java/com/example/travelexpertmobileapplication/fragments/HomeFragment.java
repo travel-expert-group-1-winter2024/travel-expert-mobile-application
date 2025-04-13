@@ -152,9 +152,11 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         //Loading the fragment
-                        Fragment packagesFragment = new PackagesFragment();
+                        //Fragment packagesFragment = new PackagesFragment();
+                        Fragment modernPackagesFragment = new ModernPackageFragment();
                         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                        transaction.replace(R.id.fragment_container, packagesFragment);
+                        //transaction.replace(R.id.fragment_container, packagesFragment);
+                        transaction.replace(R.id.fragment_container, modernPackagesFragment);
                         transaction.addToBackStack(null);
                         transaction.commit();
                     }
