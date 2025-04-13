@@ -3,23 +3,23 @@ package com.example.travelexpertmobileapplication.fragments;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.travelexpertmobileapplication.R;
-import com.example.travelexpertmobileapplication.adapters.ProductsAdapter;
-import com.example.travelexpertmobileapplication.adapters.SupplierAdapter;
-import com.example.travelexpertmobileapplication.model.Product;
+import com.example.travelexpertmobileapplication.adapters.PackageAdapter;
+import com.example.travelexpertmobileapplication.model.Package;
+import com.example.travelexpertmobileapplication.model.SupplierContact;
 import com.example.travelexpertmobileapplication.network.ApiClient;
-import com.example.travelexpertmobileapplication.network.api.ProductAPIService;
-import com.example.travelexpertmobileapplication.network.api.SupplierContactAPIService;
+import com.example.travelexpertmobileapplication.network.api.PackageAPIService;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
@@ -32,34 +32,38 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class ModernProductsFragment extends Fragment {
+
+public class ModernPackageFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private ProductsAdapter adapter;
-    private List<Product> productList = new ArrayList<>();
 
+    private PackageAdapter adapter;
+    private List<Package> packageList = new ArrayList<>();
     private ImageView btnBack;
 
 
-    public ModernProductsFragment() {
+
+    public ModernPackageFragment() {
         // Required empty public constructor
     }
+
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        adapter = new ProductsAdapter(productList, getContext());
+        adapter = new PackageAdapter(packageList, getContext());
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_modern_products, container, false);
-        recyclerView = view.findViewById(R.id.product_recycler_view);
+        View view = inflater.inflate(R.layout.fragment_modern_package, container, false);
+        recyclerView = view.findViewById(R.id.package_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ProductsAdapter(productList, getContext());
+        adapter = new PackageAdapter(packageList, getContext());
         recyclerView.setAdapter(adapter);
         btnBack = view.findViewById(R.id.btnBack);
 
@@ -79,36 +83,41 @@ public class ModernProductsFragment extends Fragment {
             requireActivity().getOnBackPressedDispatcher().onBackPressed();
         });
 
-        fetchProducts();
+        fetchPackages();
         return view;
     }
 
-    private void fetchProducts() {
-        ProductAPIService productAPIService = ApiClient.getClient().create(ProductAPIService.class);
-        productAPIService.getProducts().enqueue(new Callback<JsonArray>() {
+
+    private void fetchPackages() {
+        PackageAPIService apiService = ApiClient.getClient().create(PackageAPIService.class);
+        apiService.getPackages().enqueue(new Callback<JsonArray>() {
             @Override
-            public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
+            public void onResponse(@NonNull Call<JsonArray> call, @NonNull Response<JsonArray> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Timber.tag("API Response").e("Raw JSON: %s", response.body().toString()); //!Debugging
-
-
-                    List<Product> products = new Gson().fromJson(response.body(), new TypeToken<List<Product>>() {
-                    }.getType());
-                    productList.clear();
-                    productList.addAll(products);
-
+                    JsonArray array = response.body();
+                    packageList.clear();
+                    List<Package> packages = new Gson().fromJson(array, new TypeToken<List<Package>>() {}.getType());
+                    List<SupplierContact> dummyData = new ArrayList<>();
+                    for (int i = 0; i < 10; i++) {
+                        SupplierContact contact = new SupplierContact();
+                        contact.setSupconfirstname("First " + i);
+                        contact.setSupconcompany("Company " + i);
+                        dummyData.add(contact);
+                    }
+                    //supplierList.addAll(dummyData);
+                    packageList.clear();
+                    packageList.addAll(packages);
 
                     adapter.notifyDataSetChanged();
                 } else {
-                    Timber.tag("API Error").e("Product response not successful: %s", response.code());
+                    Timber.tag("API").e("Error loading supplier contacts");
                 }
             }
 
             @Override
             public void onFailure(Call<JsonArray> call, Throwable t) {
-                Timber.tag("API Error").e("Failed to fetch products: %s", t.getMessage());
+                Timber.tag("API").e("Failure: %s", t.getMessage());
             }
         });
     }
-
-}//! Class
+}
