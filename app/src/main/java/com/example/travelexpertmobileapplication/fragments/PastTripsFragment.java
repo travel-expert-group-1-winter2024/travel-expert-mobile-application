@@ -77,9 +77,11 @@ public class PastTripsFragment extends Fragment {
             @Override
             public void onResponse(Call<List<PastTripsModel>> call, Response<List<PastTripsModel>> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    //! Clearing current list
                     tripDataList.clear();
                     tripDataL.clear();
 
+                    //!
                     String agentIdStr = SharedPrefUtil.getAgentId(requireContext());
                     if (agentIdStr == null || agentIdStr.trim().isEmpty()) {
                         Toast.makeText(getContext(), "Agent ID not found", Toast.LENGTH_SHORT).show();
