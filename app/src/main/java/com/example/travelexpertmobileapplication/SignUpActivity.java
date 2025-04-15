@@ -29,6 +29,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.travelexpertmobileapplication.dto.agency.AgencyListResponse;
 import com.example.travelexpertmobileapplication.dto.agent.CreateAgentRequestDTO;
+import com.example.travelexpertmobileapplication.dto.agent.CreateAgentResponseDTO;
+import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.dto.user.SignUpRequestDTO;
 import com.example.travelexpertmobileapplication.dto.user.SignUpResponseDTO;
 import com.example.travelexpertmobileapplication.model.Agency;
@@ -40,6 +42,7 @@ import com.example.travelexpertmobileapplication.network.api.UserAPIService;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -66,7 +69,7 @@ public class SignUpActivity extends AppCompatActivity {
     ImageView imgProfile;
     Bitmap bitmapImage;
     ArrayAdapter<Agency> adapter;
-    String imagePath;
+    File tempImageFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,22 +132,30 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void createAgentAndUser(String firstName, String middleInitial, String lastName, String phoneNumber, String email, String password, Agency agency) {
-        Call<Void> callAgent = agentAPIService.createAgent(
-                new CreateAgentRequestDTO(firstName, middleInitial, lastName, phoneNumber, email, (long) agency.getId())
-        );
+        CreateAgentRequestDTO requestDTO = new CreateAgentRequestDTO();
+        requestDTO.setAgtFirstName(firstName);
+        requestDTO.setAgtMiddleInitial(middleInitial);
+        requestDTO.setAgtLastName(lastName);
+        requestDTO.setAgtBusPhone(phoneNumber);
+        requestDTO.setAgtEmail(email);
+        requestDTO.setAgencyId(String.valueOf(agency.getId()));
+        requestDTO.setPassword(password);
+
+        Call<GenericApiResponse<CreateAgentResponseDTO>> callAgent = agentAPIService.createAgent(requestDTO);
         callAgent.enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<GenericApiResponse<CreateAgentResponseDTO>> call, Response<GenericApiResponse<CreateAgentResponseDTO>> response) {
                 if (response.isSuccessful()) {
-                    String location = response.headers().get("Location");
-                    int agentId = extractAgentIdFromLocationHeader(location);
+                    if (response.body() == null) {
+                        Timber.e("Response body is null");
+                        return;
+                    }
 
-                    // create user
-                    createUser(email, password, agentId);
+                    CreateAgentResponseDTO agentResponse = response.body().getData();
 
-                    if (agentId != -1 && imagePath != null) {
+                    if (tempImageFile != null && tempImageFile.exists() && tempImageFile.canRead()) {
                         // upload image
-                        uploadImage(imagePath, firstName, lastName, agentId);
+                        uploadImage(tempImageFile, firstName, lastName, agentResponse.getAgentId());
                     }
 
                     Toast.makeText(SignUpActivity.this, "Agent registered successfully", Toast.LENGTH_SHORT).show();
@@ -157,7 +168,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<GenericApiResponse<CreateAgentResponseDTO>> call, Throwable t) {
                 Toast.makeText(SignUpActivity.this, "Failed to register agent", Toast.LENGTH_SHORT).show();
                 Timber.e(t, "Failed to register agent");
             }
@@ -185,19 +196,13 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    private void uploadImage(String imagePath, String firstName, String lastName, int agentId) {
-
-        File file = new File(imagePath);
-        if (!file.exists() || !file.canRead()) {
-            Timber.e("File does not exist or cannot be read: %s", imagePath);
-            return;
-        }
+    private void uploadImage(File tempImageFile, String firstName, String lastName, int agentId) {
 
         // rename file to "agent_<firstName>_<lastName>_<agentId>.jpg"
-        File renamedFile = new File(file.getParent(), generateImageName(firstName, lastName, agentId) + ".jpg");
-        boolean renamed = file.renameTo(renamedFile);
+        File renamedFile = new File(tempImageFile.getParent(), generateImageName(firstName, lastName, agentId) + ".jpg");
+        boolean renamed = tempImageFile.renameTo(renamedFile);
         if (!renamed) {
-            Timber.e("Failed to rename file: %s", file.getAbsolutePath());
+            Timber.e("Failed to rename file: %s", tempImageFile.getAbsolutePath());
         }
         RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), renamedFile);
         MultipartBody.Part body = MultipartBody.Part.createFormData("image", renamedFile.getName(), requestFile);
@@ -219,6 +224,16 @@ public class SignUpActivity extends AppCompatActivity {
                 Toast.makeText(SignUpActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // delete temp file
+        if (tempImageFile.exists()) {
+            boolean deleted = tempImageFile.delete();
+            if (deleted) {
+                Timber.i("Temp file deleted successfully");
+            } else {
+                Timber.e("Failed to delete temp file: %s", tempImageFile.getAbsolutePath());
+            }
+        }
     }
 
     private void loadAgency() {
@@ -325,6 +340,18 @@ public class SignUpActivity extends AppCompatActivity {
                 // Image selected from gallery
                 Uri selectedImageUri = data.getData();
                 imgProfile.setImageURI(selectedImageUri);
+                try {
+                    File tempFile = createFileFromContentUri(selectedImageUri);
+                    if (tempFile == null) {
+                        Timber.e("Failed to create file from content URI");
+                        return;
+                    }
+                    // set for upload
+                    tempImageFile = tempFile;
+                } catch (IOException e) {
+                    Timber.e(e, "Failed to create file from content URI");
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -356,7 +383,8 @@ public class SignUpActivity extends AppCompatActivity {
             mediaScanIntent.setData(contentUri);
             sendBroadcast(mediaScanIntent);
 
-            imagePath = imageFile.getAbsolutePath();
+            // set for upload
+            tempImageFile = imageFile;
 
             Toast.makeText(this, "Image saved to " + imageFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
             Timber.i("Image saved to %s", imageFile.getAbsolutePath());
@@ -385,5 +413,25 @@ public class SignUpActivity extends AppCompatActivity {
             Timber.e("Failed to parse agent ID from location: %s", location);
             return -1;
         }
+    }
+
+    private File createFileFromContentUri(Uri uri) throws IOException {
+        InputStream inputStream = getContentResolver().openInputStream(uri);
+        if (inputStream == null) return null;
+
+        File tempFile = File.createTempFile("gallery_img_", ".jpg", getCacheDir());
+        FileOutputStream outputStream = new FileOutputStream(tempFile);
+
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+
+        outputStream.flush();
+        outputStream.close();
+        inputStream.close();
+
+        return tempFile;
     }
 }
