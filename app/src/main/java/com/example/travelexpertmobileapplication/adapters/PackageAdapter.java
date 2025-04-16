@@ -35,13 +35,13 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.MyViewHo
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PackageAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_card, parent, false);
-        return new MyViewHolder(view); //! Returning a new Viewholder Instance
+        return new PackageAdapter.MyViewHolder(view); //! Returning a new Viewholder Instance
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PackageAdapter.MyViewHolder holder, int position) {
         //* Grabbing Data
         Package data = packageList.get(position);
 
@@ -61,7 +61,7 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.MyViewHo
 
             packageDetailsFragment.setArguments(bundle);
 
-            FragmentTransaction transaction = ((FragmentActivity)context).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, packageDetailsFragment);
             transaction.addToBackStack(null);
             transaction.commit();
@@ -71,16 +71,16 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.MyViewHo
 
     @Override
     public int getItemCount() {
-        if (packageList == null){
-            Timber.e("SupplierAdapter: supplierList is null");
+        if (packageList == null) {
+            Timber.tag("PackageAdapter").e("Package list is null");
             return 0;
         }
-        Timber.tag("SupplierAdapter").d("Number of suppliers fetched: " + packageList.size());
+        Timber.tag("PackageAdapter").d("Number of packages fetched: %s", packageList.size());
 
         return packageList.size(); //* Returning the total number of items.
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView title, description;
 
@@ -89,7 +89,6 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.MyViewHo
             title = itemView.findViewById(R.id.item_title);
             description = itemView.findViewById(R.id.item_description);
         }
-
 
 
     }
