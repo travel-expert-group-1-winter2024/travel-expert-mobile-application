@@ -1,6 +1,10 @@
 package com.example.travelexpertmobileapplication.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -8,18 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-
 import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.adapters.PackageAdapter;
 import com.example.travelexpertmobileapplication.model.Package;
-import com.example.travelexpertmobileapplication.model.SupplierContact;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.PackageAPIService;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
@@ -42,11 +39,9 @@ public class ModernPackageFragment extends Fragment {
     private ImageView btnBack;
 
 
-
     public ModernPackageFragment() {
         // Required empty public constructor
     }
-
 
 
     @Override
@@ -96,15 +91,8 @@ public class ModernPackageFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     JsonArray array = response.body();
                     packageList.clear();
-                    List<Package> packages = new Gson().fromJson(array, new TypeToken<List<Package>>() {}.getType());
-                    List<SupplierContact> dummyData = new ArrayList<>();
-                    for (int i = 0; i < 10; i++) {
-                        SupplierContact contact = new SupplierContact();
-                        contact.setSupconfirstname("First " + i);
-                        contact.setSupconcompany("Company " + i);
-                        dummyData.add(contact);
-                    }
-                    //supplierList.addAll(dummyData);
+                    List<Package> packages = new Gson().fromJson(array, new TypeToken<List<Package>>() {
+                    }.getType());
                     packageList.clear();
                     packageList.addAll(packages);
 
