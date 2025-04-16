@@ -1,5 +1,7 @@
 package com.example.travelexpertmobileapplication.network;
 
+import com.example.travelexpertmobileapplication.auth.TokenProvider;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -16,6 +18,18 @@ public class ApiClient {
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             // Attach it to OkHttpClient
             OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(chain -> {
+                        okhttp3.Request original = chain.request();
+                        okhttp3.Request.Builder builder = original.newBuilder();
+
+                        String token = TokenProvider.getToken();
+                        if (token != null && !token.isEmpty()) {
+                            builder.header("Authorization", "Bearer " + token);
+                        }
+
+                        okhttp3.Request request = builder.build();
+                        return chain.proceed(request);
+                    })
                     .addInterceptor(loggingInterceptor)
                     .build();
 
