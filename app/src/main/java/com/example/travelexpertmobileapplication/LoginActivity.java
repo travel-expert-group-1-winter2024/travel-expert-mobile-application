@@ -13,6 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.travelexpertmobileapplication.auth.TokenProvider;
 import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
 import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.dto.user.AuthResponseDTO;
@@ -90,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                         getAgentInfo();
                         Timber.d("Login successful, token: %s", token);
                         SharedPrefUtil.saveToken(LoginActivity.this, token);
+                        TokenProvider.setToken(token);
 
                         // Create an intent to start the main activity
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
