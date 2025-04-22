@@ -1,7 +1,5 @@
 package com.example.travelexpertmobileapplication.fragments;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +14,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
 import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
+import com.example.travelexpertmobileapplication.dto.agent.AgentImageResponseDTO;
 import com.example.travelexpertmobileapplication.dto.generic.GenericApiResponse;
 import com.example.travelexpertmobileapplication.network.ApiClient;
 import com.example.travelexpertmobileapplication.network.api.AgentAPIService;
@@ -25,7 +25,6 @@ import com.example.travelexpertmobileapplication.utils.SharedPrefUtil;
 import com.example.travelexpertmobileapplication.utils.SignOutUtil;
 import com.google.android.material.button.MaterialButton;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -140,15 +139,18 @@ public class ProfileFragment extends Fragment {
                     AgentDetailsResponseDTO agentInfo = response.body().getData();
 
                     // get agent image
-                    Call<ResponseBody> callImage = agentAPIService.getAgentPhoto("Bearer " + token, agentInfo.getId().intValue());
+                    Call<GenericApiResponse<AgentImageResponseDTO>> callImage = agentAPIService.getAgentPhoto("Bearer " + token, agentInfo.getId().intValue());
                     callImage.enqueue(new Callback<>() {
                         @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        public void onResponse(Call<GenericApiResponse<AgentImageResponseDTO>> call, Response<GenericApiResponse<AgentImageResponseDTO>> response) {
                             if (response.isSuccessful() && response.body() != null) {
                                 try {
-                                    byte[] imageBytes = response.body().bytes();
-                                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                                    agentImage.setImageBitmap(bitmap);
+                                    String imageUrl = response.body().getData().getImageURL();
+                                    Glide.with(requireContext())
+                                            .load(imageUrl)
+                                            .placeholder(R.drawable.placeholder)
+                                            .error(R.drawable.placeholder)
+                                            .into(agentImage);
 
                                     //Bundling up the Agent info to pass to EditProfileFragment
                                     bundle.putLong("id", agentInfo.getId());
@@ -158,7 +160,7 @@ public class ProfileFragment extends Fragment {
                                     bundle.putString("busPhone", agentInfo.getAgtBusPhone());
                                     bundle.putString("email", agentInfo.getAgtEmail());
                                     bundle.putString("position", agentInfo.getAgtPosition());
-                                    bundle.putByteArray("agentImage", imageBytes);
+                                    bundle.putString("agentImageUrl", imageUrl);
 
                                     //Setting the agent info into the waiting and available TextViews.
                                     agentGreeting.setText(String.format("Every detail matters, %s", agentInfo.getAgtFirstName()));
@@ -178,7 +180,7 @@ public class ProfileFragment extends Fragment {
                         }
 
                         @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        public void onFailure(Call<GenericApiResponse<AgentImageResponseDTO>> call, Throwable t) {
                             Timber.tag("onFailure:").e("Api call failed: %s", t.getMessage());
                             Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                         }

@@ -1,6 +1,7 @@
 package com.example.travelexpertmobileapplication.network.api;
 
 import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
+import com.example.travelexpertmobileapplication.dto.agent.AgentImageResponseDTO;
 import com.example.travelexpertmobileapplication.dto.agent.AgentUpdateDetailRequestDTO;
 import com.example.travelexpertmobileapplication.dto.agent.CreateAgentRequestDTO;
 import com.example.travelexpertmobileapplication.dto.agent.CreateAgentResponseDTO;
@@ -12,7 +13,6 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
-import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -39,9 +39,8 @@ public interface AgentAPIService {
             @Path("id") long id,
             @Body AgentUpdateDetailRequestDTO agentInfo);
 
-    @Headers("Accept: image/jpeg")
     @GET("/agents/{id}/photo")
-    Call<ResponseBody> getAgentPhoto(
+    Call<GenericApiResponse<AgentImageResponseDTO>> getAgentPhoto(
             @Header("Authorization") String token,
             @Path("id") int agentId);
 }
