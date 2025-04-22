@@ -145,7 +145,10 @@ public class ProfileFragment extends Fragment {
                         public void onResponse(Call<GenericApiResponse<AgentImageResponseDTO>> call, Response<GenericApiResponse<AgentImageResponseDTO>> response) {
                             if (response.isSuccessful() && response.body() != null) {
                                 try {
-                                    String imageUrl = response.body().getData().getImageURL();
+                                    String imageUrl = null;
+                                    if (response.body().getData() != null) {
+                                        imageUrl = response.body().getData().getImageURL();
+                                    }
                                     Glide.with(requireContext())
                                             .load(imageUrl)
                                             .placeholder(R.drawable.placeholder)
