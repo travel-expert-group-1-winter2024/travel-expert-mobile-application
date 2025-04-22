@@ -1,7 +1,5 @@
 package com.example.travelexpertmobileapplication.fragments;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
 import com.example.travelexpertmobileapplication.R;
 import com.example.travelexpertmobileapplication.dto.agent.AgentDetailsResponseDTO;
 import com.example.travelexpertmobileapplication.dto.agent.AgentUpdateDetailRequestDTO;
@@ -68,7 +67,7 @@ public class EditProfileFragment extends Fragment {
     private TextView textFieldEmail;
     private String position;
     private TextView textFieldPosition;
-    private byte[] agentImageByte;
+    private String agentImageUrl;
     private ImageView ivAgentProfilePic;
     private Button btnSignOut;
 
@@ -114,7 +113,7 @@ public class EditProfileFragment extends Fragment {
             busPhone = getArguments().getString("busPhone");
             email = getArguments().getString("email");
             position = getArguments().getString("position");
-            agentImageByte = getArguments().getByteArray("agentImage");
+            agentImageUrl = getArguments().getString("agentImageUrl");
         }
     }
 
@@ -155,8 +154,11 @@ public class EditProfileFragment extends Fragment {
         textFieldPosition.setText(position);
 
         // setting agent profile pictrure
-        Bitmap bitmap = BitmapFactory.decodeByteArray(agentImageByte, 0, agentImageByte.length);
-        ivAgentProfilePic.setImageBitmap(bitmap);
+        Glide.with(requireContext())
+                .load(agentImageUrl)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
+                .into(ivAgentProfilePic);
 
         //? Check for changes in the existing String objects
         //? If changes, activate the saveChanges button
