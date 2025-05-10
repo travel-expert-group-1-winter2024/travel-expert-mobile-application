@@ -52,11 +52,12 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/customer_recycler_view"
-        android:layout_width="418dp"
-        android:layout_height="791dp"
+        android:layout_width="417dp"
+        android:layout_height="708dp"
         android:padding="8dp"
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
